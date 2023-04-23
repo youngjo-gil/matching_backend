@@ -1,15 +1,18 @@
 package com.matching.member.domain;
 
 import com.matching.common.domain.BaseEntity;
-import lombok.*;
 import com.matching.member.dto.SignUpRequest;
-import org.checkerframework.checker.units.qual.C;
+import lombok.*;
 import org.hibernate.envers.AuditOverride;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -18,15 +21,19 @@ import java.util.Collection;
 @NoArgsConstructor
 @Entity
 @AuditOverride(forClass = BaseEntity.class)
-@Table(name = "member")
 public class Member extends BaseEntity implements UserDetails {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_id")
+    private Long id;
     private String email;
     private String password;
     private String name;
     private String nickname;
     private String profileImageUrl;
-    private String role;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> roles = new ArrayList<>();
 
     public static Member from(SignUpRequest parameter) {
         return Member.builder()
@@ -35,15 +42,15 @@ public class Member extends BaseEntity implements UserDetails {
                 .name(parameter.getName())
                 .nickname(parameter.getNickname())
                 .profileImageUrl(parameter.getProfileImageUrl())
-                .role("ROLE_USER")
                 .build();
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return roles.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
     }
-
     @Override
     public String getUsername() {
         return null;

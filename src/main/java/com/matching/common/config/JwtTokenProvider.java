@@ -44,9 +44,9 @@ public class JwtTokenProvider {
         this.REFRESH_TOKEN_EXPIRE_TIME = refreshTime;
     }
 
-    public String generateToken(String username, String role, long tokenValidTime) {
+    public String generateToken(String username, List<String> roles, long tokenValidTime) {
         Claims claims = Jwts.claims().setSubject(username);
-        claims.put(KEY_ROLES, role);
+        claims.put(KEY_ROLES, roles);
 
         Date now = new Date();
         Date expiredDate = new Date(now.getTime() + tokenValidTime);
@@ -59,13 +59,13 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public String createAccessToken(String username, String role) {
-        return this.generateToken(username, role, ACCESS_TOKEN_EXPIRE_TIME);
+    public String createAccessToken(String username, List<String> roles) {
+        return this.generateToken(username, roles, ACCESS_TOKEN_EXPIRE_TIME);
     }
 
 
-    public String createRefreshToken(String username, String role) {
-        return this.generateToken(username, role, REFRESH_TOKEN_EXPIRE_TIME);
+    public String createRefreshToken(String username, List<String> roles) {
+        return this.generateToken(username, roles, REFRESH_TOKEN_EXPIRE_TIME);
     }
 
     public String getMemberEmailByToken(String token) {
@@ -91,6 +91,7 @@ public class JwtTokenProvider {
                 Arrays.stream(claims.get(KEY_ROLES).toString().split(","))
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
+
         UserDetails principal = new User(claims.getSubject(), "", authorities);
 
         return new UsernamePasswordAuthenticationToken(

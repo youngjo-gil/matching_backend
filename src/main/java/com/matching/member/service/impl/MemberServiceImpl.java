@@ -33,7 +33,6 @@ public class MemberServiceImpl implements MemberService {
         }
 
         parameter.setPassword(passwordEncoder.encode(parameter.getPassword()));
-
         Member member = memberRepository.save(Member.from(parameter));
 
         if(ObjectUtils.isEmpty(member)) {
@@ -57,7 +56,7 @@ public class MemberServiceImpl implements MemberService {
             throw new RuntimeException("비밀번호가 일치하지 않습니다.");
         }
 
-        String accessToken = jwtTokenProvider.createAccessToken(member.getEmail(), member.getRole());
+        String accessToken = jwtTokenProvider.createAccessToken(member.getEmail(), member.getRoles());
 
         return MemberResponse.of(member, accessToken);
     }
