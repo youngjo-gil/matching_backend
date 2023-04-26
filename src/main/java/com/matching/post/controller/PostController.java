@@ -22,14 +22,8 @@ public class PostController {
             @RequestBody PostRequest parameter,
             HttpServletRequest request
     ) {
-        boolean savePostComplete = postService.writePost(parameter, request);
+        Long savePostComplete = postService.writePost(parameter, request);
 
-        if(savePostComplete) {
-            return ResponseEntity.ok().body("글 작성 성공");
-        } else {
-            return ResponseEntity.badRequest().body("글 작성 실패");
-        }
+        return ResponseEntity.ok().body("글 작성 성공");
     }
-
-
 }

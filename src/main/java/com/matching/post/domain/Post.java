@@ -2,11 +2,14 @@ package com.matching.post.domain;
 
 import com.matching.common.domain.BaseEntity;
 import com.matching.member.domain.Member;
+import com.matching.plan.domain.Plan;
 import com.matching.post.dto.PostRequest;
 import lombok.*;
 import org.hibernate.envers.AuditOverride;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -28,6 +31,9 @@ public class Post extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private Member author;
+
+//    @OneToMany
+//    private List<Plan> plans = new ArrayList<>();
 
     public static Post from(PostRequest parameter) {
         return Post.builder()
