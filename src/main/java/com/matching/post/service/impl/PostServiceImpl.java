@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 public class PostServiceImpl implements PostService {
     private final JwtTokenProvider jwtTokenProvider;
     private final PostRepository postRepository;
-
     private final MemberRepository memberRepository;
     private final PlanRepository planRepository;
 

@@ -1,13 +1,11 @@
 package com.matching.post.controller;
 
 import com.matching.post.dto.PostRequest;
+import com.matching.post.dto.PostResponse;
 import com.matching.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -22,8 +20,18 @@ public class PostController {
             @RequestBody PostRequest parameter,
             HttpServletRequest request
     ) {
-        Long savePostComplete = postService.writePost(parameter, request);
+        Long postId = postService.writePost(parameter, request);
 
-        return ResponseEntity.ok().body("글 작성 성공");
+        return ResponseEntity.ok().body(postId);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getPost(
+            @PathVariable Long id,
+            HttpServletRequest request
+    ) {
+        PostResponse postResponse = postService.getPost(id);
+
+        return ResponseEntity.ok().body(postResponse);
     }
 }
