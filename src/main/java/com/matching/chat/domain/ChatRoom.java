@@ -3,10 +3,7 @@ package com.matching.chat.domain;
 import com.matching.common.domain.BaseEntity;
 import com.matching.post.domain.Post;
 import com.matching.member.domain.Member;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.envers.AuditOverride;
 
 import javax.persistence.*;
@@ -17,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Builder
 @AuditOverride(forClass = BaseEntity.class)
 public class ChatRoom extends BaseEntity {
     @Id
@@ -27,7 +25,8 @@ public class ChatRoom extends BaseEntity {
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.REMOVE)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "member_id")
-    private List<Member> user;
+    private Member member;
+
 }
