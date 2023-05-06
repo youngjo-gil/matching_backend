@@ -3,10 +3,7 @@ package com.matching.chat.domain;
 import com.matching.common.domain.BaseEntity;
 import com.matching.member.domain.Member;
 import com.matching.post.domain.Post;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.apache.catalina.User;
 import org.hibernate.envers.AuditOverride;
 
@@ -17,6 +14,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Builder
 @AuditOverride(forClass = BaseEntity.class)
 public class ChatMessage extends BaseEntity {
     @Id

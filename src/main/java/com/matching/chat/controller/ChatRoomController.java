@@ -1,7 +1,7 @@
 package com.matching.chat.controller;
 
 import com.matching.chat.dto.ChatRoomDto;
-import com.matching.chat.service.ChatService;
+import com.matching.chat.service.ChatRoomService;
 import com.matching.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/chatroom")
 public class ChatRoomController {
-    private final ChatService chatService;
+    private final ChatRoomService chatRoomService;
 
     @PostMapping
     public ResponseEntity<Long> createChatRoom(
             @RequestBody ChatRoomDto parameter,
             @AuthenticationPrincipal Member member
     ) {
-        Long chatRoomId = chatService.createRoom(parameter.getPostId(), member);
+        Long chatRoomId = chatRoomService.createRoom(parameter.getPostId(), member);
 
         return ResponseEntity.ok(chatRoomId);
     }

@@ -1,5 +1,6 @@
 package com.matching.chat.dto;
 
+import com.matching.chat.domain.ChatMessage;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,4 +19,14 @@ public class ChatMessageDto implements Serializable {
     private String message;
     private Long userId;
     private String nickname;
+
+    public static ChatMessageDto fromEntity(ChatMessage parameter) {
+        return ChatMessageDto.builder()
+                .chatId(parameter.getId())
+                .chatRoomId(parameter.getChatRoom().getId())
+                .message(parameter.getMessage())
+                .userId(parameter.getMember().getId())
+                .nickname(parameter.getMember().getNickname())
+                .build();
+    }
 }
