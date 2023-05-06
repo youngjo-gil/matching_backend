@@ -21,6 +21,9 @@ public class ChatMessage extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
+    private MessageType type;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_room_id")
     private ChatRoom chatRoom;
@@ -30,5 +33,20 @@ public class ChatMessage extends BaseEntity {
     private Member member;
 
     private String message;
+
+
+    public enum MessageType {
+        ENTER, QUIT, TALK
+    }
+
+
+    public static ChatMessage createChatMessage(ChatRoom chatRoom, Member member, String message, MessageType type) {
+        return ChatMessage.builder()
+                .chatRoom(chatRoom)
+                .member(member)
+                .message(message)
+                .type(type)
+                .build();
+    }
 
 }

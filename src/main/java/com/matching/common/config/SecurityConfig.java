@@ -28,15 +28,17 @@ public class SecurityConfig {
         http
                 .httpBasic().disable()
                 .csrf().disable()
+                .headers().frameOptions().sameOrigin()
+                .and()
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
 
                 .authorizeRequests()
-                .antMatchers("/**")
+                .antMatchers("/ws/**")
                 .permitAll()
 
-                .anyRequest().authenticated()
+//                .anyRequest().authenticated()
                 .and()
                 .apply(new JwtSecurityConfig(jwtTokenProvider));
 
