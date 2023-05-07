@@ -5,6 +5,8 @@ import com.matching.post.dto.PostResponse;
 import com.matching.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,9 +20,10 @@ public class PostController {
     @PostMapping("/write")
     public ResponseEntity<?> savePost(
             @RequestBody PostRequest parameter,
-            HttpServletRequest request
-    ) {
-        Long postId = postService.writePost(parameter, request);
+            @AuthenticationPrincipal User user
+            ) {
+        String id = user.getUsername();
+        Long postId = postService.writePost(parameter, id);
 
         return ResponseEntity.ok().body(postId);
     }

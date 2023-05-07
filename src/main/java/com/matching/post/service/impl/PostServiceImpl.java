@@ -27,11 +27,8 @@ public class PostServiceImpl implements PostService {
 
     @Transactional
     @Override
-    public Long writePost(PostRequest parameter, HttpServletRequest request) {
-        String token = jwtTokenProvider.resolveToken(request);
-        String email = jwtTokenProvider.getMemberEmailByToken(token);
-
-        Member member = memberRepository.findByEmail(email)
+    public Long writePost(PostRequest parameter, String id) {
+        Member member = memberRepository.findById(Long.parseLong(id))
                         .orElseThrow(() -> new RuntimeException("회원이 없습니다."));
 
         parameter.setMember(member);

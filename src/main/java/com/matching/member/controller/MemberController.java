@@ -51,4 +51,10 @@ public class MemberController {
 
         return ResponseEntity.ok().body(memberResponse);
     }
+
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout() {
+        return null;
+    }
 }
