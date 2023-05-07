@@ -3,9 +3,12 @@ package com.matching.member.controller;
 import com.matching.member.dto.MemberResponse;
 import com.matching.member.dto.SignInRequest;
 import com.matching.member.dto.SignUpRequest;
+import com.matching.member.dto.UpdateMemberRequest;
 import com.matching.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -33,6 +36,18 @@ public class MemberController {
             @RequestBody SignInRequest parameter
     ) {
         MemberResponse memberResponse = memberService.signIn(parameter);
+
+        return ResponseEntity.ok().body(memberResponse);
+    }
+
+    @PatchMapping("/update")
+    public ResponseEntity<?> updateMember(
+            @RequestBody UpdateMemberRequest parameter,
+            @AuthenticationPrincipal User user
+    ) {
+        Long id = Long.parseLong(user.getUsername());
+
+        MemberResponse memberResponse = memberService.updateMember(parameter, id);
 
         return ResponseEntity.ok().body(memberResponse);
     }

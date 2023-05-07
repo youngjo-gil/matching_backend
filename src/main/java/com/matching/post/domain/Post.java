@@ -8,6 +8,7 @@ import lombok.*;
 import org.hibernate.envers.AuditOverride;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +27,8 @@ public class Post extends BaseEntity {
     private Long id;
     private String title;
     private String content;
+    private LocalDate startedAt;
+    private LocalDate endedAt;
 
     // 글 작성자
     @ManyToOne(fetch = FetchType.LAZY)
@@ -39,6 +42,8 @@ public class Post extends BaseEntity {
         return Post.builder()
                 .title(parameter.getTitle())
                 .content(parameter.getContent())
+                .startedAt(parameter.getStartedAt())
+                .endedAt(parameter.getEndedAt())
                 .author(parameter.getMember())
                 .build();
     }

@@ -44,8 +44,8 @@ public class JwtTokenProvider {
         this.REFRESH_TOKEN_EXPIRE_TIME = refreshTime;
     }
 
-    public String generateToken(String username, List<String> roles, long tokenValidTime) {
-        Claims claims = Jwts.claims().setSubject(username);
+    public String generateToken(Long id, List<String> roles, long tokenValidTime) {
+        Claims claims = Jwts.claims().setSubject(String.valueOf(id));
         claims.put(KEY_ROLES, roles);
 
         Date now = new Date();
@@ -59,13 +59,13 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public String createAccessToken(String username, List<String> roles) {
-        return this.generateToken(username, roles, ACCESS_TOKEN_EXPIRE_TIME);
+    public String createAccessToken(Long id, List<String> roles) {
+        return this.generateToken(id, roles, ACCESS_TOKEN_EXPIRE_TIME);
     }
 
 
-    public String createRefreshToken(String username, List<String> roles) {
-        return this.generateToken(username, roles, REFRESH_TOKEN_EXPIRE_TIME);
+    public String createRefreshToken(Long id, List<String> roles) {
+        return this.generateToken(id, roles, REFRESH_TOKEN_EXPIRE_TIME);
     }
 
     public String getMemberEmailByToken(String token) {

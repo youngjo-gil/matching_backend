@@ -5,11 +5,13 @@ import com.matching.member.domain.Member;
 import com.matching.member.dto.MemberResponse;
 import com.matching.member.dto.SignInRequest;
 import com.matching.member.dto.SignUpRequest;
+import com.matching.member.dto.UpdateMemberRequest;
 import com.matching.member.repository.MemberRepository;
 import com.matching.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 @Service
@@ -24,6 +26,7 @@ public class MemberServiceImpl implements MemberService {
      * @param Member
      * @return boolean
      */
+    @Transactional
     @Override
     public boolean signup(SignUpRequest parameter) {
         boolean existsByEmail = memberRepository.existsByEmail(parameter.getEmail());
@@ -56,9 +59,25 @@ public class MemberServiceImpl implements MemberService {
             throw new RuntimeException("비밀번호가 일치하지 않습니다.");
         }
 
-        String accessToken = jwtTokenProvider.createAccessToken(member.getEmail(), member.getRoles());
+        String accessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getRoles());
 
         return MemberResponse.of(member, accessToken);
     }
 
+    /**
+     * 회정정보 수정
+     * @param UpdateMemberRequest
+     * @return MemberResponse
+     */
+    @Transactional
+    @Override
+    public MemberResponse updateMember(UpdateMemberRequest parameter, Long id) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("해당 회원이 없습니다."));
+
+        member.update(parameter);
+        String accessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getRoles());
+
+        return MemberResponse.of(member, accessToken);
+    }
 }
