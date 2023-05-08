@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
+import java.sql.Ref;
+
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
@@ -65,7 +67,12 @@ public class MemberServiceImpl implements MemberService {
         String accessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getRoles());
         String refreshToken = jwtTokenProvider.createRefreshToken(member.getId(), member.getRoles());
 
-        refreshTokenRepository.save(new RefreshToken(member.getId(), refreshToken));
+        refreshTokenRepository.save(
+                RefreshToken.builder()
+                        .userId(member.getId())
+                        .refreshToken(refreshToken)
+                        .build()
+        );
 
         return MemberResponse.of(member, accessToken);
     }

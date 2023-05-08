@@ -26,9 +26,9 @@ public class RefreshTokenRepository {
     }
 
     public void save(RefreshToken refreshToken) {
-        ValueOperations<Long, String> valueOperations = redisTemplate.opsForValue();
+        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
 
-        valueOperations.set(refreshToken.getUserId(), refreshToken.getRefreshToken(), EXPIRE_TIME, TimeUnit.MILLISECONDS);
+        valueOperations.set(String.valueOf(refreshToken.getUserId()), refreshToken.getRefreshToken(), EXPIRE_TIME, TimeUnit.MILLISECONDS);
     }
 
     public void delete(RefreshToken refreshToken) {
@@ -46,7 +46,7 @@ public class RefreshTokenRepository {
     }
 
     public Optional<RefreshToken> findById(Long userId) {
-        ValueOperations<Long, String> valueOperations = redisTemplate.opsForValue();
+        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
 
         String token = valueOperations.get(userId);
 

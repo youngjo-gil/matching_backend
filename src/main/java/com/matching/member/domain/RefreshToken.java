@@ -9,12 +9,16 @@ import javax.persistence.Id;
 
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class RefreshToken {
     @Id
     private Long userId;
 
     private String refreshToken;
+
+    @Builder
+    public RefreshToken(Long userId, String refreshToken) {
+        this.userId = userId;
+        this.refreshToken = refreshToken;
+    }
 
 }
