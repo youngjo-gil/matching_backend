@@ -29,11 +29,11 @@ public class PostController {
     }
 
 
-    @GetMapping("/{id}")
+    @GetMapping
     public ResponseEntity<?> getPost(
-            @PathVariable Long id
+            @RequestParam(name = "postId") Long postId
     ) {
-        PostResponse postResponse = postService.getPost(id);
+        PostResponse postResponse = postService.getPost(postId);
 
         return ResponseEntity.ok().body(postResponse);
     }

@@ -11,6 +11,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Entity
 public class Participate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,14 +26,27 @@ public class Participate {
     private Post post;
 
     @Enumerated(EnumType.STRING)
-    private String status;
+    private ParticipateStatus status;
 
 
     /**
-     * ADMISSION 참가 승인, REFUSE 참가 거부, EXIT 중도 포기, SUCCESS 성공
+     * BEFORE 승인전 , ADMISSION 참가 승인, REFUSE 참가 거부, EXIT 중도 포기, SUCCESS 성공
      */
     public enum ParticipateStatus {
-        ADMISSION, REFUSE, EXIT, SUCCESS
+        BEFORE, ADMISSION, REFUSE, FAIL, SUCCESS
+    }
+
+    public void updateStatus(ParticipateStatus status) {
+        this.status = status;
+    }
+
+
+    public static Participate from(Member member, Post post) {
+        return Participate.builder()
+                .participate(member)
+                .post(post)
+                .status(ParticipateStatus.BEFORE)
+                .build();
     }
 
 }
