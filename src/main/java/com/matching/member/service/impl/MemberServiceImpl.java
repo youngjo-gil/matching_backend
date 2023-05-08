@@ -2,11 +2,13 @@ package com.matching.member.service.impl;
 
 import com.matching.common.config.JwtTokenProvider;
 import com.matching.member.domain.Member;
+import com.matching.member.domain.RefreshToken;
 import com.matching.member.dto.MemberResponse;
 import com.matching.member.dto.SignInRequest;
 import com.matching.member.dto.SignUpRequest;
 import com.matching.member.dto.UpdateMemberRequest;
 import com.matching.member.repository.MemberRepository;
+import com.matching.member.repository.RefreshTokenRepository;
 import com.matching.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +22,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     /**
      * 회원 가입
@@ -60,6 +63,9 @@ public class MemberServiceImpl implements MemberService {
         }
 
         String accessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getRoles());
+        String refreshToken = jwtTokenProvider.createRefreshToken(member.getId(), member.getRoles());
+
+        refreshTokenRepository.save(new RefreshToken(member.getId(), refreshToken));
 
         return MemberResponse.of(member, accessToken);
     }
@@ -76,7 +82,10 @@ public class MemberServiceImpl implements MemberService {
                 .orElseThrow(() -> new RuntimeException("해당 회원이 없습니다."));
 
         member.update(parameter);
+
         String accessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getRoles());
+
+        memberRepository.save(member);
 
         return MemberResponse.of(member, accessToken);
     }

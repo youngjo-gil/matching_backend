@@ -30,10 +30,10 @@ public class Participate {
 
 
     /**
-     * BEFORE 승인전 , ADMISSION 참가 승인, REFUSE 참가 거부, EXIT 중도 포기, SUCCESS 성공
+     * BEFORE 승인전 , ADMISSION 참가 승인, REFUSE 참가 거부, EXIT 중도 포기, SUCCESS 성공, LEADER 팀장
      */
     public enum ParticipateStatus {
-        BEFORE, ADMISSION, REFUSE, FAIL, SUCCESS
+        BEFORE, ADMISSION, REFUSE, FAIL, SUCCESS, LEADER
     }
 
     public void updateStatus(ParticipateStatus status) {

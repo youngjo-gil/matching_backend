@@ -3,6 +3,8 @@ package com.matching.post.service.impl;
 import com.matching.common.config.JwtTokenProvider;
 import com.matching.member.domain.Member;
 import com.matching.member.repository.MemberRepository;
+import com.matching.participate.domain.Participate;
+import com.matching.participate.repository.ParticipateRepository;
 import com.matching.plan.domain.Plan;
 import com.matching.plan.dto.PlanRequest;
 import com.matching.plan.repository.PlanRepository;
@@ -24,6 +26,7 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
     private final PlanRepository planRepository;
+    private final ParticipateRepository participateRepository;
 
 
     @Transactional
@@ -35,10 +38,12 @@ public class PostServiceImpl implements PostService {
         parameter.setMember(member);
 
         Post post = postRepository.save(Post.from(parameter));
-
         Plan plan = planRepository.save(Plan.from(parameter, member, post));
 
+        Participate participate = participateRepository.save(Participate.from(member, post));
+
         post.setPlan(plan);
+        participate.setStatus(Participate.ParticipateStatus.LEADER);
 
         return post.getId();
     }
