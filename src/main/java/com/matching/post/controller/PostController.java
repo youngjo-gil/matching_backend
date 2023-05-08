@@ -21,17 +21,17 @@ public class PostController {
     public ResponseEntity<?> savePost(
             @RequestBody PostRequest parameter,
             @AuthenticationPrincipal User user
-            ) {
+    ) {
         String id = user.getUsername();
         Long postId = postService.writePost(parameter, id);
 
         return ResponseEntity.ok().body(postId);
     }
 
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getPost(
-            @PathVariable Long id,
-            HttpServletRequest request
+            @PathVariable Long id
     ) {
         PostResponse postResponse = postService.getPost(id);
 

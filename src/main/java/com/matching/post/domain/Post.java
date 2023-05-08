@@ -27,23 +27,22 @@ public class Post extends BaseEntity {
     private Long id;
     private String title;
     private String content;
-    private LocalDate startedAt;
-    private LocalDate endedAt;
+
+
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "plan_id")
+    private Plan plan;
 
     // 글 작성자
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private Member author;
 
-//    @OneToMany
-//    private List<Plan> plans = new ArrayList<>();
-
     public static Post from(PostRequest parameter) {
         return Post.builder()
                 .title(parameter.getTitle())
                 .content(parameter.getContent())
-                .startedAt(parameter.getStartedAt())
-                .endedAt(parameter.getEndedAt())
                 .author(parameter.getMember())
                 .build();
     }

@@ -4,6 +4,7 @@ import com.matching.common.config.JwtTokenProvider;
 import com.matching.member.domain.Member;
 import com.matching.member.repository.MemberRepository;
 import com.matching.plan.domain.Plan;
+import com.matching.plan.dto.PlanRequest;
 import com.matching.plan.repository.PlanRepository;
 import com.matching.post.domain.Post;
 import com.matching.post.dto.PostRequest;
@@ -13,13 +14,13 @@ import com.matching.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 import javax.servlet.http.HttpServletRequest;
 
 @Service
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
-    private final JwtTokenProvider jwtTokenProvider;
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
     private final PlanRepository planRepository;
@@ -35,6 +36,10 @@ public class PostServiceImpl implements PostService {
 
         Post post = postRepository.save(Post.from(parameter));
 
+        Plan plan = planRepository.save(Plan.from(parameter, member, post));
+
+        post.setPlan(plan);
+
         return post.getId();
     }
 
@@ -49,13 +54,16 @@ public class PostServiceImpl implements PostService {
 
     @Transactional
     @Override
-    public Long participate(String email, Long postId) {
+    public Long participate(PlanRequest parameter, String email, Long postId) {
         Member participant = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
 
-        return planRepository.save(Plan.from(participant, post)).getId();
+
+//        return planRepository.save(Plan.from(parameter, participant, post)).getId();
+
+        return null;
     }
 
     @Transactional
