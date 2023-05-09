@@ -17,7 +17,8 @@ import java.io.InputStream;
 @Service
 public class AwsS3Service {
     private final AmazonS3Client amazonS3Client;
-    @Value("${cloud.aws.s3.bucket.url}")
+
+    @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
     public String upload(MultipartFile multipartFile) {

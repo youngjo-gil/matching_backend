@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @RestController
@@ -19,9 +20,10 @@ public class MemberController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(
-            @RequestBody SignUpRequest parameter
+            @RequestPart(value = "file", required = false) MultipartFile multipartFile,
+            @RequestPart(value = "request") SignUpRequest parameter
     ) {
-        boolean signUpComplete = memberService.signup(parameter);
+        boolean signUpComplete = memberService.signup(parameter, multipartFile);
 
         if(signUpComplete) {
             return ResponseEntity.ok().body("회원가입 완료");
@@ -41,12 +43,13 @@ public class MemberController {
 
     @PatchMapping("/update")
     public ResponseEntity<?> updateMember(
-            @RequestBody MemberUpdateRequest parameter,
+            @RequestPart(value = "request") MemberUpdateRequest parameter,
+            @RequestPart(value = "file", required = false) MultipartFile multipartFile,
             @AuthenticationPrincipal User user
     ) {
         Long id = Long.parseLong(user.getUsername());
 
-        MemberResponse memberResponse = memberService.updateMember(parameter, id);
+        MemberResponse memberResponse = memberService.updateMember(parameter, id, multipartFile);
 
         return ResponseEntity.ok().body(memberResponse);
     }

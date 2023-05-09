@@ -1,5 +1,6 @@
 package com.matching.member.service.impl;
 
+import com.matching.aws.service.AwsS3Service;
 import com.matching.common.config.JwtTokenProvider;
 import com.matching.member.domain.Member;
 import com.matching.member.domain.RefreshToken;
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +25,7 @@ public class MemberServiceImpl implements MemberService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final AwsS3Service awsS3Service;
 
     /**
      * 회원 가입
@@ -31,14 +34,18 @@ public class MemberServiceImpl implements MemberService {
      */
     @Transactional
     @Override
-    public boolean signup(SignUpRequest parameter) {
+    public boolean signup(SignUpRequest parameter, MultipartFile multipartFile) {
         boolean existsByEmail = memberRepository.existsByEmail(parameter.getEmail());
 
         if(existsByEmail) {
             throw new RuntimeException("회원 이메일이 존재합니다.");
         }
 
+        String uploadFile = awsS3Service.upload(multipartFile);
+
+        parameter.setProfileImageUrl(uploadFile);
         parameter.setPassword(passwordEncoder.encode(parameter.getPassword()));
+
         Member member = memberRepository.save(Member.from(parameter));
 
         if(ObjectUtils.isEmpty(member)) {
@@ -82,12 +89,15 @@ public class MemberServiceImpl implements MemberService {
      */
     @Transactional
     @Override
-    public MemberResponse updateMember(MemberUpdateRequest parameter, Long id) {
+    public MemberResponse updateMember(MemberUpdateRequest parameter, Long id, MultipartFile multipartFile) {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("해당 회원이 없습니다."));
 
-
         String accessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getRoles());
+
+        if(multipartFile != null) {
+            parameter.setProfileImageUrl(awsS3Service.upload(multipartFile));
+        }
 
         member.update(parameter);
 
