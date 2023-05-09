@@ -2,7 +2,7 @@ package com.matching.member.domain;
 
 import com.matching.common.domain.BaseEntity;
 import com.matching.member.dto.SignUpRequest;
-import com.matching.member.dto.UpdateMemberRequest;
+import com.matching.member.dto.MemberUpdateRequest;
 import lombok.*;
 import org.hibernate.envers.AuditOverride;
 import org.springframework.security.core.GrantedAuthority;
@@ -36,10 +36,14 @@ public class Member extends BaseEntity implements UserDetails {
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles = new ArrayList<>();
 
-    public void update(UpdateMemberRequest parameter) {
-        this.password = (parameter.getPassword() == null) ? this.getPassword() : parameter.getPassword();
-        this.nickname = (parameter.getNickname() == null) ? this.getNickname() : parameter.getNickname();
-        this.profileImageUrl = (parameter.getProfileImageUrl() == null) ? this.getProfileImageUrl() : parameter.getProfileImageUrl();
+    public void update(MemberUpdateRequest parameter) {
+//        this.password = (parameter.getPassword() == null) ? this.getPassword() : parameter.getPassword();
+//        this.nickname = (parameter.getNickname() == null) ? this.getNickname() : parameter.getNickname();
+//        this.profileImageUrl = (parameter.getProfileImageUrl() == null) ? this.getProfileImageUrl() : parameter.getProfileImageUrl();
+
+        this.password = parameter.getPassword();
+        this.nickname = parameter.getNickname();
+        this.profileImageUrl = parameter.getProfileImageUrl();
     }
 
     public static Member from(SignUpRequest parameter) {

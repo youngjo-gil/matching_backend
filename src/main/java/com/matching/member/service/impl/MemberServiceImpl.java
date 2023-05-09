@@ -6,7 +6,7 @@ import com.matching.member.domain.RefreshToken;
 import com.matching.member.dto.MemberResponse;
 import com.matching.member.dto.SignInRequest;
 import com.matching.member.dto.SignUpRequest;
-import com.matching.member.dto.UpdateMemberRequest;
+import com.matching.member.dto.MemberUpdateRequest;
 import com.matching.member.repository.MemberRepository;
 import com.matching.member.repository.RefreshTokenRepository;
 import com.matching.member.service.MemberService;
@@ -15,8 +15,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
-
-import java.sql.Ref;
 
 @Service
 @RequiredArgsConstructor
@@ -84,15 +82,14 @@ public class MemberServiceImpl implements MemberService {
      */
     @Transactional
     @Override
-    public MemberResponse updateMember(UpdateMemberRequest parameter, Long id) {
+    public MemberResponse updateMember(MemberUpdateRequest parameter, Long id) {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("해당 회원이 없습니다."));
 
-        member.update(parameter);
 
         String accessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getRoles());
 
-        memberRepository.save(member);
+        member.update(parameter);
 
         return MemberResponse.of(member, accessToken);
     }

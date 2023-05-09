@@ -3,7 +3,7 @@ package com.matching.member.controller;
 import com.matching.member.dto.MemberResponse;
 import com.matching.member.dto.SignInRequest;
 import com.matching.member.dto.SignUpRequest;
-import com.matching.member.dto.UpdateMemberRequest;
+import com.matching.member.dto.MemberUpdateRequest;
 import com.matching.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +41,7 @@ public class MemberController {
 
     @PatchMapping("/update")
     public ResponseEntity<?> updateMember(
-            @RequestBody UpdateMemberRequest parameter,
+            @RequestBody MemberUpdateRequest parameter,
             @AuthenticationPrincipal User user
     ) {
         Long id = Long.parseLong(user.getUsername());

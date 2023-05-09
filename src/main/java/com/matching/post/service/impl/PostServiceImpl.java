@@ -1,6 +1,5 @@
 package com.matching.post.service.impl;
 
-import com.matching.common.config.JwtTokenProvider;
 import com.matching.member.domain.Member;
 import com.matching.member.repository.MemberRepository;
 import com.matching.participate.domain.Participate;
@@ -11,14 +10,12 @@ import com.matching.plan.repository.PlanRepository;
 import com.matching.post.domain.Post;
 import com.matching.post.dto.PostRequest;
 import com.matching.post.dto.PostResponse;
+import com.matching.post.dto.PostUpdateRequest;
 import com.matching.post.repository.PostRepository;
 import com.matching.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
-
-import javax.servlet.http.HttpServletRequest;
 
 @Service
 @RequiredArgsConstructor
@@ -56,6 +53,16 @@ public class PostServiceImpl implements PostService {
         return PostResponse.from(post);
     }
 
+    @Transactional
+    @Override
+    public Long updatePost(Long postId, Long userId, PostUpdateRequest parameter) {
+        Post post = postRepository.findByIdAndAuthor_Id(postId, userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 포스트가 존재하지 않습니다."));
+
+        post.update(parameter);
+
+        return post.getId();
+    }
 
     @Transactional
     @Override

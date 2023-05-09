@@ -4,6 +4,7 @@ import com.matching.common.domain.BaseEntity;
 import com.matching.member.domain.Member;
 import com.matching.plan.domain.Plan;
 import com.matching.post.dto.PostRequest;
+import com.matching.post.dto.PostUpdateRequest;
 import lombok.*;
 import org.hibernate.envers.AuditOverride;
 
@@ -38,6 +39,11 @@ public class Post extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private Member author;
+
+    public void update(PostUpdateRequest request) {
+        this.title = request.getTitle();
+        this.content = request.getContent();
+    }
 
     public static Post from(PostRequest parameter) {
         return Post.builder()

@@ -1,5 +1,6 @@
 package com.matching.member.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 @Getter
@@ -7,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UpdateMemberRequest {
+public class MemberUpdateRequest {
     private String password;
     private String nickname;
     private String profileImageUrl;
