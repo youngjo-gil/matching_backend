@@ -1,27 +1,28 @@
 package com.matching.chat.controller;
 
 import com.matching.chat.dto.ChatMessageDto;
-import com.matching.chat.dto.ChatRoomDto;
 import com.matching.chat.service.ChatRoomService;
 import com.matching.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/chatroom")
+@RequestMapping("/api/v1/chatroom")
 public class ChatRoomController {
     private final ChatRoomService chatRoomService;
 
-    @PostMapping
-    public ResponseEntity<Long> createChatRoom(
-            @RequestBody ChatRoomDto parameter,
-            @AuthenticationPrincipal Member member
+    @PostMapping("/{postId}")
+    public ResponseEntity<?> createChatRoom(
+            @PathVariable Long postId,
+            @AuthenticationPrincipal User user
     ) {
-        Long chatRoomId = chatRoomService.createRoom(parameter.getPostId(), member);
+        Long userId = Long.parseLong(user.getUsername());
+        Long chatRoomId = chatRoomService.createRoom(postId, userId);
 
         return ResponseEntity.ok(chatRoomId);
     }

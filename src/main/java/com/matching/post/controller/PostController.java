@@ -1,6 +1,5 @@
 package com.matching.post.controller;
 
-import com.matching.post.domain.Post;
 import com.matching.post.dto.PostRequest;
 import com.matching.post.dto.PostResponse;
 import com.matching.post.dto.PostUpdateRequest;
@@ -10,8 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequiredArgsConstructor
@@ -48,5 +45,13 @@ public class PostController {
         Long id = postService.updatePost(postId, Long.parseLong(user.getUsername()), parameter);
 
         return ResponseEntity.ok().body(id);
+    }
+
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<?> deletePost(
+        @PathVariable Long postId,
+        @AuthenticationPrincipal User user
+    ) {
+        return null;
     }
 }

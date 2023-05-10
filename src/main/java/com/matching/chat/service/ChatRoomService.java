@@ -7,7 +7,7 @@ import org.springframework.data.domain.Slice;
 
 public interface ChatRoomService {
     ChatRoom getChatRoom(Long chatRoomId);
-    Long createRoom(Long postId, Member member);
+    Long createRoom(Long postId, Long userId);
 
     Slice<ChatMessageDto> getMessageList(Long chatRoomId, int page, int size, Member member);
 }

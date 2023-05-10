@@ -6,6 +6,7 @@ import com.matching.chat.repository.ChatMessageRepository;
 import com.matching.chat.repository.ChatRoomRepository;
 import com.matching.chat.service.ChatRoomService;
 import com.matching.member.domain.Member;
+import com.matching.member.repository.MemberRepository;
 import com.matching.post.domain.Post;
 import com.matching.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final PostRepository postRepository;
+    private final MemberRepository memberRepository;
     @Override
     public ChatRoom getChatRoom(Long chatRoomId) {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
@@ -29,12 +31,16 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     }
 
     @Override
-    public Long createRoom(Long postId, Member member) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("해당 게시글이 없습니다."));
+    public Long createRoom(Long postId, Long userId) {
+        Post post = postRepository.findByIdAndAuthor_Id(postId, userId)
+                .orElseThrow(() -> new IllegalArgumentException("글작성자만 채팅방 개설이 가능합니다."));
+
+        if(!post.getAuthor().getId().equals(userId)) {
+            throw new IllegalArgumentException("");
+        }
 
         return chatRoomRepository.save(ChatRoom.builder()
-                .member(member)
+                .member(post.getAuthor())
                 .post(post)
                 .build()).getId();
     }
