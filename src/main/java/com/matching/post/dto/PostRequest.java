@@ -1,6 +1,7 @@
 package com.matching.post.dto;
 
 import com.matching.member.domain.Member;
+import com.matching.post.domain.Category;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -17,6 +18,7 @@ public class PostRequest {
     private String title;
     private String content;
     private Member member;
+    private Category category;
 
     /**
      * 목표

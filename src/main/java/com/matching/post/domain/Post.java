@@ -9,9 +9,6 @@ import lombok.*;
 import org.hibernate.envers.AuditOverride;
 
 import javax.persistence.*;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
@@ -30,6 +27,9 @@ public class Post extends BaseEntity {
     private String content;
 
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "plan_id")
@@ -49,6 +49,7 @@ public class Post extends BaseEntity {
         return Post.builder()
                 .title(parameter.getTitle())
                 .content(parameter.getContent())
+                .category(parameter.getCategory())
                 .author(parameter.getMember())
                 .build();
     }
