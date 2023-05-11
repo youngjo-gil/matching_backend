@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/member")
@@ -20,7 +22,7 @@ public class MemberController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(
-            @RequestPart(value = "file", required = false) MultipartFile multipartFile,
+            @RequestPart(value = "file", required = false) List<MultipartFile> multipartFile,
             @RequestPart(value = "request") SignUpRequest parameter
     ) {
         boolean signUpComplete = memberService.signup(parameter, multipartFile);
@@ -44,7 +46,7 @@ public class MemberController {
     @PatchMapping("/update")
     public ResponseEntity<?> updateMember(
             @RequestPart(value = "request") MemberUpdateRequest parameter,
-            @RequestPart(value = "file", required = false) MultipartFile multipartFile,
+            @RequestPart(value = "file", required = false) List<MultipartFile> multipartFile,
             @AuthenticationPrincipal User user
     ) {
         Long id = Long.parseLong(user.getUsername());

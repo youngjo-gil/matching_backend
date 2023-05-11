@@ -18,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
@@ -34,16 +36,16 @@ public class MemberServiceImpl implements MemberService {
      */
     @Transactional
     @Override
-    public boolean signup(SignUpRequest parameter, MultipartFile multipartFile) {
+    public boolean signup(SignUpRequest parameter, List<MultipartFile> multipartFile) {
         boolean existsByEmail = memberRepository.existsByEmail(parameter.getEmail());
 
         if(existsByEmail) {
             throw new RuntimeException("회원 이메일이 존재합니다.");
         }
 
-        String uploadFile = awsS3Service.upload(multipartFile);
+        List<String> uploadFile = awsS3Service.upload(multipartFile);
 
-        parameter.setProfileImageUrl(uploadFile);
+        parameter.setProfileImageUrl(uploadFile.get(0));
         parameter.setPassword(passwordEncoder.encode(parameter.getPassword()));
 
         Member member = memberRepository.save(Member.from(parameter));
@@ -89,14 +91,16 @@ public class MemberServiceImpl implements MemberService {
      */
     @Transactional
     @Override
-    public MemberResponse updateMember(MemberUpdateRequest parameter, Long id, MultipartFile multipartFile) {
+    public MemberResponse updateMember(MemberUpdateRequest parameter, Long id, List<MultipartFile> multipartFile) {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("해당 회원이 없습니다."));
 
         String accessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getRoles());
 
+        List<String> uploadFile = awsS3Service.upload(multipartFile);
+
         if(multipartFile != null) {
-            parameter.setProfileImageUrl(awsS3Service.upload(multipartFile));
+            parameter.setProfileImageUrl(uploadFile.get(0));
         }
 
         member.update(parameter);

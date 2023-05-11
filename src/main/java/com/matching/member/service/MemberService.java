@@ -6,8 +6,10 @@ import com.matching.member.dto.SignUpRequest;
 import com.matching.member.dto.MemberUpdateRequest;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 public interface MemberService {
-    boolean signup(SignUpRequest parameter, MultipartFile multipartFile);
+    boolean signup(SignUpRequest parameter, List<MultipartFile> multipartFile);
     MemberResponse signIn(SignInRequest parameter);
-    MemberResponse updateMember(MemberUpdateRequest parameter, Long id, MultipartFile multipartFile);
+    MemberResponse updateMember(MemberUpdateRequest parameter, Long id, List<MultipartFile> multipartFile);
 }

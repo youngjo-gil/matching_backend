@@ -1,9 +1,11 @@
 package com.matching.post.service.impl;
 
+import com.matching.common.config.JwtTokenProvider;
 import com.matching.member.domain.Member;
 import com.matching.member.repository.MemberRepository;
 import com.matching.participate.domain.Participate;
 import com.matching.participate.repository.ParticipateRepository;
+import com.matching.photo.service.PhotoService;
 import com.matching.plan.domain.Plan;
 import com.matching.plan.dto.PlanRequest;
 import com.matching.plan.repository.PlanRepository;
@@ -16,6 +18,11 @@ import com.matching.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -25,10 +32,12 @@ public class PostServiceImpl implements PostService {
     private final PlanRepository planRepository;
     private final ParticipateRepository participateRepository;
 
+    private final PhotoService photoService;
+
 
     @Transactional
     @Override
-    public Long writePost(PostRequest parameter, String id) {
+    public Long writePost(PostRequest parameter, String id, List<MultipartFile> multipartFileList) {
         Member member = memberRepository.findById(Long.parseLong(id))
                         .orElseThrow(() -> new RuntimeException("회원이 없습니다."));
 
@@ -38,6 +47,8 @@ public class PostServiceImpl implements PostService {
         Plan plan = planRepository.save(Plan.from(parameter, member, post));
 
         Participate participate = participateRepository.save(Participate.from(member, post));
+
+        photoService.savePhoto(post, multipartFileList);
 
         post.setPlan(plan);
         participate.setStatus(Participate.ParticipateStatus.LEADER);

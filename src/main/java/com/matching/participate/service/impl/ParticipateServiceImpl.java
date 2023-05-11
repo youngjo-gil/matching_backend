@@ -10,6 +10,7 @@ import com.matching.post.domain.Post;
 import com.matching.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,6 +18,8 @@ public class ParticipateServiceImpl implements ParticipateService {
     private final ParticipateRepository participateRepository;
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
+
+    @Transactional
     @Override
     public Long insertParticipate(Long id, Long postId) {
         Member member = memberRepository.findById(id)
@@ -27,6 +30,7 @@ public class ParticipateServiceImpl implements ParticipateService {
         return participateRepository.save(Participate.from(member, post)).getId();
     }
 
+    @Transactional
     @Override
     public Long updateParticipateStatus(Long id, Long postId, ParticipateStatusRequest parameter) {
         Post post = postRepository.findById(postId)
@@ -43,7 +47,6 @@ public class ParticipateServiceImpl implements ParticipateService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 참가자를 조회할 수 없습니다."));
 
         participate.updateStatus(Participate.ParticipateStatus.ADMISSION);
-
         participateRepository.save(participate);
 
         return null;

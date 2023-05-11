@@ -9,6 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,11 +21,12 @@ public class PostController {
 
     @PostMapping("/write")
     public ResponseEntity<?> savePost(
-            @RequestBody PostRequest parameter,
+            @RequestPart("file") List<MultipartFile> multipartFileList,
+            @RequestPart("request") PostRequest parameter,
             @AuthenticationPrincipal User user
     ) {
         String id = user.getUsername();
-        Long postId = postService.writePost(parameter, id);
+        Long postId = postService.writePost(parameter, id, multipartFileList);
 
         return ResponseEntity.ok().body(postId);
     }

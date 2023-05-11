@@ -12,6 +12,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -21,20 +23,25 @@ public class AwsS3Service {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public String upload(MultipartFile multipartFile) {
-        String fileName = FileUtil.convert(multipartFile);
+    public List<String> upload(List<MultipartFile> multipartFile) {
+        List<String> imgUrlList = new ArrayList<>();
 
-        ObjectMetadata objectMetadata = new ObjectMetadata();
-        objectMetadata.setContentType(multipartFile.getContentType());
+        for (MultipartFile file : multipartFile) {
+            String fileName = FileUtil.convert(file);
 
-        try (InputStream inputStream = multipartFile.getInputStream()) {
-            amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, inputStream, objectMetadata)
-                    .withCannedAcl(CannedAccessControlList.PublicRead));
+            ObjectMetadata objectMetadata = new ObjectMetadata();
+            objectMetadata.setContentType(file.getContentType());
 
-        } catch (IOException e) {
-            throw new RuntimeException("파일 업로드 실패");
+            try (InputStream inputStream = file.getInputStream()) {
+                amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, inputStream, objectMetadata)
+                        .withCannedAcl(CannedAccessControlList.PublicRead));
+
+                imgUrlList.add(amazonS3Client.getUrl(bucket, fileName).toString());
+            } catch (IOException e) {
+                throw new RuntimeException("파일 업로드 실패");
+            }
         }
 
-        return amazonS3Client.getUrl(bucket, fileName).toString();
+        return imgUrlList;
     }
 }
