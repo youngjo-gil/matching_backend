@@ -1,5 +1,7 @@
 package com.matching.post.controller;
 
+import com.matching.common.dto.ResponseDto;
+import com.matching.common.utils.ResponseUtil;
 import com.matching.post.dto.PostRequest;
 import com.matching.post.dto.PostResponse;
 import com.matching.post.dto.PostUpdateRequest;
@@ -20,7 +22,7 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping("/write")
-    public ResponseEntity<?> savePost(
+    public ResponseDto savePost(
             @RequestPart("file") List<MultipartFile> multipartFileList,
             @RequestPart("request") PostRequest parameter,
             @AuthenticationPrincipal User user
@@ -28,27 +30,27 @@ public class PostController {
         String id = user.getUsername();
         Long postId = postService.writePost(parameter, id, multipartFileList);
 
-        return ResponseEntity.ok().body(postId);
+        return ResponseUtil.SUCCESS("글쓰기 성공", postId);
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<?> getPost(
+    public ResponseDto getPost(
             @PathVariable Long postId
     ) {
         PostResponse postResponse = postService.getPost(postId);
 
-        return ResponseEntity.ok().body(postResponse);
+        return ResponseUtil.SUCCESS("글 조회 성공", postResponse);
     }
 
     @PatchMapping("/{postId}")
-    public ResponseEntity<?> updatePost(
+    public ResponseDto updatePost(
         @PathVariable Long postId,
         @RequestBody PostUpdateRequest parameter,
         @AuthenticationPrincipal User user
     ) {
         Long id = postService.updatePost(postId, Long.parseLong(user.getUsername()), parameter);
 
-        return ResponseEntity.ok().body(id);
+        return ResponseUtil.SUCCESS("글 수정 성공", id);
     }
 
     @DeleteMapping("/{postId}")

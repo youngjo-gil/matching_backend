@@ -1,5 +1,7 @@
 package com.matching.member.controller;
 
+import com.matching.common.dto.ResponseDto;
+import com.matching.common.utils.ResponseUtil;
 import com.matching.member.dto.MemberResponse;
 import com.matching.member.dto.SignInRequest;
 import com.matching.member.dto.SignUpRequest;
@@ -21,30 +23,30 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(
+    public ResponseDto signup(
             @RequestPart(value = "file", required = false) List<MultipartFile> multipartFile,
             @RequestPart(value = "request") SignUpRequest parameter
     ) {
         boolean signUpComplete = memberService.signup(parameter, multipartFile);
 
         if(signUpComplete) {
-            return ResponseEntity.ok().body("회원가입 완료");
+            return ResponseUtil.SUCCESS("회원가입 완료", true);
         } else {
-            return ResponseEntity.badRequest().body("회원가입 실패");
+            return ResponseUtil.FAILURE("회원가입 실패", false);
         }
     }
 
     @PostMapping("/sign-in")
-    public ResponseEntity<?> signIn(
+    public ResponseDto signIn(
             @RequestBody SignInRequest parameter
     ) {
         MemberResponse memberResponse = memberService.signIn(parameter);
 
-        return ResponseEntity.ok().body(memberResponse);
+        return ResponseUtil.SUCCESS("로그인 성공", memberResponse);
     }
 
     @PatchMapping("/update")
-    public ResponseEntity<?> updateMember(
+    public ResponseDto updateMember(
             @RequestPart(value = "request") MemberUpdateRequest parameter,
             @RequestPart(value = "file", required = false) List<MultipartFile> multipartFile,
             @AuthenticationPrincipal User user
@@ -53,7 +55,7 @@ public class MemberController {
 
         MemberResponse memberResponse = memberService.updateMember(parameter, id, multipartFile);
 
-        return ResponseEntity.ok().body(memberResponse);
+        return ResponseUtil.SUCCESS("회원정보 수정 완료", memberResponse);
     }
 
 
