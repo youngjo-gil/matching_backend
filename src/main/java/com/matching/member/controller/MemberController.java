@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -25,7 +26,7 @@ public class MemberController {
     @PostMapping("/signup")
     public ResponseDto signup(
             @RequestPart(value = "file", required = false) List<MultipartFile> multipartFile,
-            @RequestPart(value = "request") SignUpRequest parameter
+            @RequestPart(value = "request") @Valid SignUpRequest parameter
     ) {
         boolean signUpComplete = memberService.signup(parameter, multipartFile);
 

@@ -12,4 +12,5 @@ public interface MemberService {
     boolean signup(SignUpRequest parameter, List<MultipartFile> multipartFile);
     MemberResponse signIn(SignInRequest parameter);
     MemberResponse updateMember(MemberUpdateRequest parameter, Long id, List<MultipartFile> multipartFile);
+    void logout(Long id);
 }
