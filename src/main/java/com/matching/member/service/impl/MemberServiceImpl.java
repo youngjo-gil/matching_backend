@@ -107,4 +107,10 @@ public class MemberServiceImpl implements MemberService {
 
         return MemberResponse.of(member, accessToken);
     }
+
+    @Transactional
+    @Override
+    public void logout(Long id) {
+
+    }
 }
