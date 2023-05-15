@@ -39,7 +39,7 @@ public class MemberController {
 
     @PostMapping("/sign-in")
     public ResponseDto signIn(
-            @RequestBody SignInRequest parameter
+            @RequestBody @Valid SignInRequest parameter
     ) {
         MemberResponse memberResponse = memberService.signIn(parameter);
 
