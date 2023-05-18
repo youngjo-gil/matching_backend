@@ -57,8 +57,6 @@ dependencies {
 	implementation('ch.qos.logback:logback-classic:')
 
 
-	// elastic search
-	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch:2.6.2'
 }
 
 tasks.named('test') {
