@@ -21,6 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/member")
 public class MemberController {
+
     private final MemberService memberService;
 
     @PostMapping("/signup")

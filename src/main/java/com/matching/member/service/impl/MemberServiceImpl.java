@@ -1,5 +1,6 @@
 package com.matching.member.service.impl;
 
+import com.matching.MatchingApplication;
 import com.matching.aws.service.AwsS3Service;
 import com.matching.common.config.JwtTokenProvider;
 import com.matching.member.domain.Member;
@@ -12,6 +13,8 @@ import com.matching.member.repository.MemberRepository;
 import com.matching.member.repository.RefreshTokenRepository;
 import com.matching.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +32,8 @@ public class MemberServiceImpl implements MemberService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final AwsS3Service awsS3Service;
 
+    private final Logger logger = LoggerFactory.getLogger(MatchingApplication.class);
+
     /**
      * 회원 가입
      * @param Member
@@ -37,6 +42,7 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     @Override
     public boolean signup(SignUpRequest parameter, List<MultipartFile> multipartFile) {
+        logger.info("sign up: {}" );
         boolean existsByEmail = memberRepository.existsByEmail(parameter.getEmail());
 
         if(existsByEmail) {
