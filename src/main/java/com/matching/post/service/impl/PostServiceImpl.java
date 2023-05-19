@@ -10,12 +10,15 @@ import com.matching.plan.domain.Plan;
 import com.matching.plan.dto.PlanRequest;
 import com.matching.plan.repository.PlanRepository;
 import com.matching.post.domain.Post;
+import com.matching.post.domain.PostDocument;
 import com.matching.post.dto.PostRequest;
 import com.matching.post.dto.PostResponse;
 import com.matching.post.dto.PostUpdateRequest;
 import com.matching.post.repository.PostRepository;
+import com.matching.post.repository.PostSearchRepository;
 import com.matching.post.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -33,6 +36,7 @@ public class PostServiceImpl implements PostService {
     private final ParticipateRepository participateRepository;
 
     private final PhotoService photoService;
+    private final PostSearchRepository postSearchRepository;
 
 
     @Transactional
@@ -104,4 +108,11 @@ public class PostServiceImpl implements PostService {
         plan.setCompleted(true);
         planRepository.save(plan);
     }
+
+    @Override
+    public List<PostDocument> getAuthorByPost(Long userId) {
+        List<PostDocument> postDocumentList = postSearchRepository.findAllByAuthor_Id(userId);
+        return postDocumentList;
+    }
+
 }

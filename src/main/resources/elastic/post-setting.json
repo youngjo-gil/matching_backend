@@ -1,0 +1,10 @@
+{
+  "properties": {
+    "id": {"type":  "long"},
+    "title": {"type":  "keyword"},
+    "content": {"type":  "keyword"},
+    "category": {"type":  "keyword"},
+    "plan": {"type": "keyword"},
+    "author": {"type":  "keyword"}
+  }
+}
