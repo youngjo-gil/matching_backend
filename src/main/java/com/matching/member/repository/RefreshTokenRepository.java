@@ -37,7 +37,7 @@ public class RefreshTokenRepository {
         }
     }
 
-    public void updateBlackList(String key, Long milliSeconds) {
+    public void setBlackList(String key, Long milliSeconds) {
         redisBlackListTemplate.opsForValue().set(key, "logout", milliSeconds, TimeUnit.MILLISECONDS);
     }
 
@@ -48,12 +48,12 @@ public class RefreshTokenRepository {
     public Optional<RefreshToken> findById(Long userId) {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
 
-        String token = valueOperations.get(userId);
+        String token = valueOperations.get(String.valueOf(userId));
 
         if(ObjectUtils.isEmpty(token)) {
             return Optional.empty();
         }
 
-        return Optional.of(new RefreshToken(userId, token));
+        return Optional.of(new RefreshToken(String.valueOf(userId), token));
     }
 }

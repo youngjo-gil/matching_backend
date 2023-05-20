@@ -11,12 +11,12 @@ import javax.persistence.Id;
 @NoArgsConstructor
 public class RefreshToken {
     @Id
-    private Long userId;
+    private String userId;
 
     private String refreshToken;
 
     @Builder
-    public RefreshToken(Long userId, String refreshToken) {
+    public RefreshToken(String userId, String refreshToken) {
         this.userId = userId;
         this.refreshToken = refreshToken;
     }

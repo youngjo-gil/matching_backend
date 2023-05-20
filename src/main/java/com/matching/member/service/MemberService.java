@@ -6,6 +6,7 @@ import com.matching.member.dto.SignUpRequest;
 import com.matching.member.dto.MemberUpdateRequest;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface MemberService {
@@ -13,4 +14,5 @@ public interface MemberService {
     MemberResponse signIn(SignInRequest parameter);
     MemberResponse updateMember(MemberUpdateRequest parameter, Long id, List<MultipartFile> multipartFile);
     void logout(Long id);
+    boolean withdraw(HttpServletRequest request, Long memberId);
 }

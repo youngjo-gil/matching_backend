@@ -32,6 +32,8 @@ public class Member extends BaseEntity implements UserDetails {
     private String name;
     private String nickname;
     private String profileImageUrl;
+    @Enumerated(EnumType.STRING)
+    private MemberStatus status;
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles = new ArrayList<>();
@@ -49,6 +51,7 @@ public class Member extends BaseEntity implements UserDetails {
                 .name(parameter.getName())
                 .nickname(parameter.getNickname())
                 .profileImageUrl(parameter.getProfileImageUrl())
+                .status(MemberStatus.REGISTERED)
                 .build();
     }
 

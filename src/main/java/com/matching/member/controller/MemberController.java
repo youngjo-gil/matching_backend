@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -64,5 +65,13 @@ public class MemberController {
     @PostMapping("/logout")
     public ResponseEntity<?> logout() {
         return null;
+    }
+
+    @PatchMapping("/withdraw")
+    public ResponseDto withdraw(
+            HttpServletRequest request,
+            @AuthenticationPrincipal User user
+    ) {
+        return ResponseUtil.SUCCESS("회원 탈퇴 완료", memberService.withdraw(request, Long.parseLong(user.getUsername())));
     }
 }

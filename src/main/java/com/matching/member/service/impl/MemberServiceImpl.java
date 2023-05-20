@@ -4,6 +4,7 @@ import com.matching.MatchingApplication;
 import com.matching.aws.service.AwsS3Service;
 import com.matching.common.config.JwtTokenProvider;
 import com.matching.member.domain.Member;
+import com.matching.member.domain.MemberStatus;
 import com.matching.member.domain.RefreshToken;
 import com.matching.member.dto.MemberResponse;
 import com.matching.member.dto.SignInRequest;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Service
@@ -84,7 +86,7 @@ public class MemberServiceImpl implements MemberService {
 
         refreshTokenRepository.save(
                 RefreshToken.builder()
-                        .userId(member.getId())
+                        .userId(String.valueOf(member.getId()))
                         .refreshToken(refreshToken)
                         .build()
         );
@@ -120,5 +122,27 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void logout(Long id) {
 
+    }
+
+    @Override
+    public boolean withdraw(HttpServletRequest request, Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("해당 회원이 없습니다."));
+        String token = jwtTokenProvider.resolveToken(request);
+
+        updateUserByTokenBlackList(token, member.getId());
+        member.setStatus(MemberStatus.WITHDRAW);
+
+        return true;
+    }
+
+    private void updateUserByTokenBlackList(String accessToken, Long memberId) {
+        RefreshToken refreshToken = refreshTokenRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("해당 유저 토큰 정보가 없습니다."));
+
+        Long expiration = jwtTokenProvider.getExpiration(accessToken);
+
+        refreshTokenRepository.setBlackList(accessToken, expiration);
+        refreshTokenRepository.delete(refreshToken);
     }
 }
