@@ -49,9 +49,11 @@ public class MemberServiceImpl implements MemberService {
             throw new RuntimeException("회원 이메일이 존재합니다.");
         }
 
-        List<String> uploadFile = awsS3Service.upload(multipartFile);
+        if(!multipartFile.isEmpty()) {
+            List<String> uploadFile = awsS3Service.upload(multipartFile);
+            parameter.setProfileImageUrl(uploadFile.get(0));
+        }
 
-        parameter.setProfileImageUrl(uploadFile.get(0));
         parameter.setPassword(passwordEncoder.encode(parameter.getPassword()));
 
         Member member = memberRepository.save(Member.from(parameter));
