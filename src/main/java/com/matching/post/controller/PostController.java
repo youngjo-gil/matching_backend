@@ -61,10 +61,4 @@ public class PostController {
         return null;
     }
 
-    @GetMapping("/list")
-    public ResponseDto getList(
-        @AuthenticationPrincipal User user
-    ) {
-        return ResponseUtil.SUCCESS("리스트 조회 성공", postService.getAuthorByPost(Long.parseLong(user.getUsername())));
-    }
 }

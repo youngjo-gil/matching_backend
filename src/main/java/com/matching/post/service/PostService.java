@@ -16,7 +16,6 @@ public interface PostService {
     PostResponse getPost(Long id);
     Long updatePost(Long postId, Long userId, PostUpdateRequest parameter);
 
-    List<PostDocument> getAuthorByPost(Long userId);
     Long participate(PlanRequest parameter, String email, Long postId);
     void completePlan(String email, Long planId);
 }
