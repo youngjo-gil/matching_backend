@@ -63,8 +63,11 @@ public class MemberController {
 
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout() {
-        return null;
+    public ResponseDto logout(
+            HttpServletRequest request,
+            @AuthenticationPrincipal User user
+    ) {
+        return ResponseUtil.SUCCESS("로그아웃 완료", memberService.logout(request, Long.parseLong(user.getUsername())));
     }
 
     @PatchMapping("/withdraw")

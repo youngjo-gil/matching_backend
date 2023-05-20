@@ -118,11 +118,17 @@ public class MemberServiceImpl implements MemberService {
         return MemberResponse.of(member, accessToken);
     }
 
-    @Transactional
     @Override
-    public void logout(Long id) {
+    public boolean logout(HttpServletRequest request, Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("해당 회원이 없습니다."));
+        String token = jwtTokenProvider.resolveToken(request);
 
+        updateUserByTokenBlackList(token, member.getId());
+
+        return true;
     }
+
 
     @Override
     public boolean withdraw(HttpServletRequest request, Long memberId) {

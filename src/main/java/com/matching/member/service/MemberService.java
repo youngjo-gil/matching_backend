@@ -13,6 +13,6 @@ public interface MemberService {
     boolean signup(SignUpRequest parameter, List<MultipartFile> multipartFile);
     MemberResponse signIn(SignInRequest parameter);
     MemberResponse updateMember(MemberUpdateRequest parameter, Long id, List<MultipartFile> multipartFile);
-    void logout(Long id);
+    boolean logout(HttpServletRequest request, Long memberId);
     boolean withdraw(HttpServletRequest request, Long memberId);
 }
