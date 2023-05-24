@@ -1,5 +1,6 @@
 package com.matching.member.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.matching.MatchingApplication;
 import com.matching.aws.service.AwsS3Service;
 import com.matching.common.config.JwtTokenProvider;
@@ -16,14 +17,18 @@ import com.matching.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +38,8 @@ public class MemberServiceImpl implements MemberService {
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
     private final AwsS3Service awsS3Service;
-
+    @Value("${jwt.refresh-token-expire-time}")
+    int expiredTime;
     private final Logger logger = LoggerFactory.getLogger(MatchingApplication.class);
 
     /**
@@ -73,7 +79,9 @@ public class MemberServiceImpl implements MemberService {
      * @return MemberResponse
      */
     @Override
-    public MemberResponse signIn(SignInRequest parameter) {
+    public Map signIn(SignInRequest parameter) {
+        Map map = new HashMap<>();
+
         Member member = memberRepository.findByEmail(parameter.getEmail())
                 .orElseThrow(() -> new RuntimeException("해당 회원이 없습니다."));
 
@@ -91,7 +99,20 @@ public class MemberServiceImpl implements MemberService {
                         .build()
         );
 
-        return MemberResponse.of(member, accessToken);
+        map.put("response", MemberResponse.of(member, accessToken));
+        map.put("refreshToken", setCookieByRefreshToken(refreshToken));
+
+        return map;
+    }
+
+    private Cookie setCookieByRefreshToken(String refreshToken) {
+        Cookie cookie = new Cookie("refreshToken", refreshToken);
+        cookie.setMaxAge(expiredTime);
+        cookie.setSecure(true);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+
+        return cookie;
     }
 
     /**

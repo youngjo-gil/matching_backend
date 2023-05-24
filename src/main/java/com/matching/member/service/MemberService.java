@@ -8,10 +8,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 
 public interface MemberService {
     boolean signup(SignUpRequest parameter, List<MultipartFile> multipartFile);
-    MemberResponse signIn(SignInRequest parameter);
+    Map signIn(SignInRequest parameter);
     MemberResponse updateMember(MemberUpdateRequest parameter, Long id, List<MultipartFile> multipartFile);
     boolean logout(HttpServletRequest request, Long memberId);
     boolean withdraw(HttpServletRequest request, Long memberId);

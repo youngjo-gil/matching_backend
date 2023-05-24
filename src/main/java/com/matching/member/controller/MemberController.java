@@ -13,9 +13,12 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -40,10 +43,15 @@ public class MemberController {
 
     @PostMapping("/sign-in")
     public ResponseDto signIn(
-            @RequestBody @Valid SignInRequest parameter
+            @RequestBody @Valid SignInRequest parameter,
+            HttpServletResponse response
     ) {
-        MemberResponse memberResponse = memberService.signIn(parameter);
+        Map map = memberService.signIn(parameter);
 
+        MemberResponse memberResponse = (MemberResponse) map.get("response");
+        Cookie cookie = (Cookie) map.get("refreshToken");
+
+        response.addCookie(cookie);
         return ResponseUtil.SUCCESS("로그인 성공", memberResponse);
     }
 
