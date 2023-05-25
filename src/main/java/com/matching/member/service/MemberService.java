@@ -12,8 +12,9 @@ import java.util.Map;
 
 public interface MemberService {
     boolean signup(SignUpRequest parameter, List<MultipartFile> multipartFile);
-    Map signIn(SignInRequest parameter);
+    MemberResponse signIn(SignInRequest parameter);
     MemberResponse updateMember(MemberUpdateRequest parameter, Long id, List<MultipartFile> multipartFile);
+    MemberResponse reissue(HttpServletRequest request, Long id);
     boolean logout(HttpServletRequest request, Long memberId);
     boolean withdraw(HttpServletRequest request, Long memberId);
 }

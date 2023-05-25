@@ -20,12 +20,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = jwtTokenProvider.resolveToken(request);
-
-        if(StringUtils.hasText(token) && jwtTokenProvider.validateToken(token) == 1) {
-            Authentication authentication = jwtTokenProvider.getAuthentication(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        if(request.getServletPath().startsWith("/api/v1/member")) {
+            filterChain.doFilter(request, response);
+        } else {
+            if (StringUtils.hasText(token) && jwtTokenProvider.validateToken(token) == 1) {
+                // 유효 토큰
+                Authentication authentication = jwtTokenProvider.getAuthentication(token);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } else if (jwtTokenProvider.validateToken(token) == 2) {
+                // 만료 토큰
+                response.sendError(401, "만료");
+            } else {
+                // 잘못된 토큰
+                response.sendError(500, "잘못된 토큰값");
+            }
+            filterChain.doFilter(request, response);
         }
-
-        filterChain.doFilter(request, response);
     }
 }

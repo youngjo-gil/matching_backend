@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,9 +27,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +42,8 @@ public class MemberServiceImpl implements MemberService {
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
     private final AwsS3Service awsS3Service;
+
+//    private final Map memberResponseMap = new HashMap<>();
     @Value("${jwt.refresh-token-expire-time}")
     int expiredTime;
     private final Logger logger = LoggerFactory.getLogger(MatchingApplication.class);
@@ -79,9 +85,7 @@ public class MemberServiceImpl implements MemberService {
      * @return MemberResponse
      */
     @Override
-    public Map signIn(SignInRequest parameter) {
-        Map map = new HashMap<>();
-
+    public MemberResponse signIn(SignInRequest parameter) {
         Member member = memberRepository.findByEmail(parameter.getEmail())
                 .orElseThrow(() -> new RuntimeException("해당 회원이 없습니다."));
 
@@ -99,21 +103,39 @@ public class MemberServiceImpl implements MemberService {
                         .build()
         );
 
-        map.put("response", MemberResponse.of(member, accessToken));
-        map.put("refreshToken", setCookieByRefreshToken(refreshToken));
-
-        return map;
+        return MemberResponse.of(member, accessToken);
     }
 
-    private Cookie setCookieByRefreshToken(String refreshToken) {
-        Cookie cookie = new Cookie("refreshToken", refreshToken);
-        cookie.setMaxAge(expiredTime);
-        cookie.setSecure(true);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
+    @Override
+    public MemberResponse reissue(HttpServletRequest request, Long id) {
+        try{
+            String accessToken = jwtTokenProvider.resolveToken(request);
 
-        return cookie;
+            RefreshToken refreshToken = refreshTokenRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("리프레쉬 토큰이 없습니다."));
+
+            if(jwtTokenProvider.validateToken(accessToken) == 2) {
+                Member member = memberRepository.findById(id)
+                        .orElseThrow(() -> new RuntimeException("회원이 없습니다."));
+
+                String newAccessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getRoles());
+                String newRefreshToken = jwtTokenProvider.createRefreshToken(member.getId(), member.getRoles());
+
+                refreshTokenRepository.save(
+                        RefreshToken.builder()
+                                .userId(String.valueOf(member.getId()))
+                                .refreshToken(newRefreshToken)
+                                .build()
+                );
+
+                return MemberResponse.of(member, newAccessToken);
+            }
+        } catch (RuntimeException e) {
+            throw new RuntimeException("토큰 만료");
+        }
+        return null;
     }
+
 
     /**
      * 회정정보 수정

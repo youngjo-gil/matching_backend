@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
@@ -140,6 +141,10 @@ public class JwtTokenProvider {
     private Claims parseClaims(String token) {
         return Jwts.parser().setSigningKey(key)
                 .parseClaimsJws(token).getBody();
+    }
+
+    public void setHeaderToken(HttpServletResponse response, String token) {
+        response.setHeader("refeshToken" , token);
     }
 
 }

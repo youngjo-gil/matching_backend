@@ -43,15 +43,9 @@ public class MemberController {
 
     @PostMapping("/sign-in")
     public ResponseDto signIn(
-            @RequestBody @Valid SignInRequest parameter,
-            HttpServletResponse response
+            @RequestBody @Valid SignInRequest parameter
     ) {
-        Map map = memberService.signIn(parameter);
-
-        MemberResponse memberResponse = (MemberResponse) map.get("response");
-        Cookie cookie = (Cookie) map.get("refreshToken");
-
-        response.addCookie(cookie);
+        MemberResponse memberResponse = memberService.signIn(parameter);
         return ResponseUtil.SUCCESS("로그인 성공", memberResponse);
     }
 
