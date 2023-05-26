@@ -49,6 +49,17 @@ public class MemberController {
         return ResponseUtil.SUCCESS("로그인 성공", memberResponse);
     }
 
+    @PostMapping("/reissue")
+    public ResponseDto reissue(
+            HttpServletRequest request,
+            @AuthenticationPrincipal User user
+    ) {
+        Long id = Long.parseLong(user.getUsername());
+        MemberResponse memberResponse = memberService.reissue(request, id);
+
+        return ResponseUtil.SUCCESS("토큰 재발행 성공", memberResponse);
+    }
+
     @PatchMapping("/update")
     public ResponseDto updateMember(
             @RequestPart(value = "request") MemberUpdateRequest parameter,
