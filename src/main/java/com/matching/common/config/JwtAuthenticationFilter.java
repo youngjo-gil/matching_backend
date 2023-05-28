@@ -17,7 +17,7 @@ import java.util.Arrays;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private String[] checkURL = {"/api/v1/member/signup", "/api/v1/member/sign-in"};
+    private String[] checkURL = {"/api/v1/member/signup", "/api/v1/member/sign-in", "/api/v1/search"};
     private final JwtTokenProvider jwtTokenProvider;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
