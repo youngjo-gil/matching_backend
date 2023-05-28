@@ -1,5 +1,7 @@
 package com.matching.post.controller;
 
+import com.matching.common.dto.ResponseDto;
+import com.matching.common.utils.ResponseUtil;
 import com.matching.post.domain.Category;
 import com.matching.post.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,11 +17,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CategoryController {
     private final CategoryRepository categoryRepository;
-
     @GetMapping
-    public ResponseEntity<?> getCategory() {
+    public ResponseDto getCategory() {
         List<Category> categoryList = categoryRepository.findAll();
-
-        return ResponseEntity.ok().body(categoryList);
+        return ResponseUtil.SUCCESS("카테고리 조회 완료", categoryList);
     }
 }

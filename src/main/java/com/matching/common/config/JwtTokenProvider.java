@@ -28,7 +28,7 @@ public class JwtTokenProvider {
     private final long ACCESS_TOKEN_EXPIRE_TIME;
     private final long REFRESH_TOKEN_EXPIRE_TIME;
     public static final String AUTHORIZATION_HEADER = "Authorization";
-    private static final String BEARER_TYPE = "bearer";
+    private static final String BEARER_TYPE = "bearer ";
     private static final String KEY_ROLES = "auth";
 
     private final Key key;
