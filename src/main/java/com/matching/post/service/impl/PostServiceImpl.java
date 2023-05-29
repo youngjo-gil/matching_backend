@@ -4,6 +4,8 @@ import com.matching.member.domain.Member;
 import com.matching.member.repository.MemberRepository;
 import com.matching.participate.domain.Participate;
 import com.matching.participate.repository.ParticipateRepository;
+import com.matching.photo.domain.Photo;
+import com.matching.photo.repository.PhotoRepository;
 import com.matching.photo.service.PhotoService;
 import com.matching.plan.domain.Plan;
 import com.matching.plan.dto.PlanRequest;
@@ -23,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +35,7 @@ public class PostServiceImpl implements PostService {
     private final PlanRepository planRepository;
     private final ParticipateRepository participateRepository;
     private final CategoryRepository categoryRepository;
+    private final PhotoRepository photoRepository;
 
     private final PhotoService photoService;
 
@@ -69,7 +73,12 @@ public class PostServiceImpl implements PostService {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
 
-        return PostResponse.from(post);
+        List<Photo> photoList = photoRepository.findAllByPost_Id(post.getId())
+                .orElse(null);
+        List<String> test = photoList.stream().map(item -> item.getPathname())
+                .collect(Collectors.toList());
+
+        return PostResponse.from(post, test);
     }
 
     @Transactional

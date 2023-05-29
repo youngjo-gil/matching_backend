@@ -38,7 +38,6 @@ public class PostController {
             @PathVariable Long postId
     ) {
         PostResponse postResponse = postService.getPost(postId);
-
         return ResponseUtil.SUCCESS("글 조회 성공", postResponse);
     }
 
