@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface PostService {
-    Long writePost(PostRequest parameter, String id, List<MultipartFile> multipartFileList);
+    Long writePost(PostRequest parameter, String id, List<MultipartFile> multipartFile);
     PostResponse getPost(Long id);
     Long updatePost(Long postId, Long userId, PostUpdateRequest parameter);
 

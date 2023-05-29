@@ -1,5 +1,6 @@
 package com.matching.member.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.matching.common.domain.BaseEntity;
 import com.matching.member.dto.SignUpRequest;
 import com.matching.member.dto.MemberUpdateRequest;

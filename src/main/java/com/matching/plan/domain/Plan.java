@@ -1,5 +1,6 @@
 package com.matching.plan.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.matching.member.domain.Member;
 import com.matching.plan.dto.PlanRequest;
 import com.matching.post.domain.Post;

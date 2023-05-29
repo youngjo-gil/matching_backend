@@ -23,12 +23,12 @@ public class PostController {
 
     @PostMapping("/write")
     public ResponseDto savePost(
-            @RequestPart("file") List<MultipartFile> multipartFileList,
+            @RequestPart(value = "file", required = false) List<MultipartFile> multipartFile,
             @RequestPart("request") PostRequest parameter,
             @AuthenticationPrincipal User user
     ) {
         String id = user.getUsername();
-        Long postId = postService.writePost(parameter, id, multipartFileList);
+        Long postId = postService.writePost(parameter, id, multipartFile);
 
         return ResponseUtil.SUCCESS("글쓰기 성공", postId);
     }

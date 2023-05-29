@@ -35,7 +35,7 @@ public class PostServiceImpl implements PostService {
 
     @Transactional
     @Override
-    public Long writePost(PostRequest parameter, String id, List<MultipartFile> multipartFileList) {
+    public Long writePost(PostRequest parameter, String id, List<MultipartFile> multipartFile) {
         Member member = memberRepository.findById(Long.parseLong(id))
                         .orElseThrow(() -> new RuntimeException("회원이 없습니다."));
 
@@ -46,7 +46,11 @@ public class PostServiceImpl implements PostService {
 
         Participate participate = participateRepository.save(Participate.from(member, post));
 
-        photoService.savePhoto(post, multipartFileList);
+        if(multipartFile != null) {
+            if(!multipartFile.isEmpty()) {
+                photoService.savePhoto(post, multipartFile);
+            }
+        }
 
         post.setPlan(plan);
         participate.setStatus(Participate.ParticipateStatus.LEADER);
