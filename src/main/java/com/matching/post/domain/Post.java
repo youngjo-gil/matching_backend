@@ -45,11 +45,11 @@ public class Post extends BaseEntity {
         this.content = request.getContent();
     }
 
-    public static Post from(PostRequest parameter) {
+    public static Post from(PostRequest parameter, Category category) {
         return Post.builder()
                 .title(parameter.getTitle())
                 .content(parameter.getContent())
-                .category(parameter.getCategory())
+                .category(category)
                 .author(parameter.getMember())
                 .build();
     }

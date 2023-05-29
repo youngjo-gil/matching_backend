@@ -8,11 +8,13 @@ import com.matching.photo.service.PhotoService;
 import com.matching.plan.domain.Plan;
 import com.matching.plan.dto.PlanRequest;
 import com.matching.plan.repository.PlanRepository;
+import com.matching.post.domain.Category;
 import com.matching.post.domain.Post;
 import com.matching.post.domain.PostDocument;
 import com.matching.post.dto.PostRequest;
 import com.matching.post.dto.PostResponse;
 import com.matching.post.dto.PostUpdateRequest;
+import com.matching.post.repository.CategoryRepository;
 import com.matching.post.repository.PostRepository;
 import com.matching.post.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ public class PostServiceImpl implements PostService {
     private final MemberRepository memberRepository;
     private final PlanRepository planRepository;
     private final ParticipateRepository participateRepository;
+    private final CategoryRepository categoryRepository;
 
     private final PhotoService photoService;
 
@@ -38,10 +41,13 @@ public class PostServiceImpl implements PostService {
     public Long writePost(PostRequest parameter, String id, List<MultipartFile> multipartFile) {
         Member member = memberRepository.findById(Long.parseLong(id))
                         .orElseThrow(() -> new RuntimeException("회원이 없습니다."));
+        Category category = categoryRepository.findById(parameter.getCategoryId())
+                        .orElseThrow(() -> new RuntimeException("해당 카테고리가 없습니다."));
+
 
         parameter.setMember(member);
 
-        Post post = postRepository.save(Post.from(parameter));
+        Post post = postRepository.save(Post.from(parameter, category));
         Plan plan = planRepository.save(Plan.from(parameter, member, post));
 
         Participate participate = participateRepository.save(Participate.from(member, post));
