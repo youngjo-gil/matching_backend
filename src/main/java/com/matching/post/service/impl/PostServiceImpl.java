@@ -20,10 +20,13 @@ import com.matching.post.repository.CategoryRepository;
 import com.matching.post.repository.PostRepository;
 import com.matching.post.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,6 +41,8 @@ public class PostServiceImpl implements PostService {
     private final PhotoRepository photoRepository;
 
     private final PhotoService photoService;
+
+
 
 
     @Transactional
@@ -90,6 +95,23 @@ public class PostServiceImpl implements PostService {
         post.update(parameter);
 
         return post.getId();
+    }
+
+    @Override
+    public List<PostResponse> getPostByCategoryAsc(Long categoryId) {
+        List<Post> postList = postRepository.findAllOrderByParticipantCountByCategoryAsc(categoryId);
+        List<PostResponse> responses = new ArrayList<>();
+
+        for (Post post: postList) {
+            List<Photo> photoList = photoRepository.findAllByPost_Id(post.getId())
+                    .orElse(null);
+            List<String> test = photoList.stream().map(item -> item.getPathname())
+                    .collect(Collectors.toList());
+
+            responses = postList.stream().map(list -> PostResponse.from(list, test )).collect(Collectors.toList());
+        }
+
+        return responses;
     }
 
     @Transactional

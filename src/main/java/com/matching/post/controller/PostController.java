@@ -52,6 +52,13 @@ public class PostController {
         return ResponseUtil.SUCCESS("글 수정 성공", id);
     }
 
+    @GetMapping("/getListAsc")
+    public ResponseDto getTest() {
+        Long categoryId = 1L;
+
+        return ResponseUtil.SUCCESS("조회성공", postService.getPostByCategoryAsc(categoryId));
+    }
+
     @DeleteMapping("/{postId}")
     public ResponseEntity<?> deletePost(
         @PathVariable Long postId,

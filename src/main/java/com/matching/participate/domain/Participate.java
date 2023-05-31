@@ -21,7 +21,7 @@ public class Participate {
     @JoinColumn(name = "user_id")
     private Member participate;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
 

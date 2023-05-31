@@ -1,7 +1,5 @@
 package com.matching.post.dto;
 
-import com.matching.photo.domain.Photo;
-import com.matching.post.domain.Category;
 import com.matching.post.domain.Post;
 import lombok.*;
 

@@ -1,7 +1,9 @@
 package com.matching.post.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.matching.common.domain.BaseEntity;
 import com.matching.member.domain.Member;
+import com.matching.participate.domain.Participate;
 import com.matching.plan.domain.Plan;
 import com.matching.post.dto.PostRequest;
 import com.matching.post.dto.PostUpdateRequest;
@@ -9,6 +11,8 @@ import lombok.*;
 import org.hibernate.envers.AuditOverride;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -26,19 +30,24 @@ public class Post extends BaseEntity {
     private String title;
     private String content;
 
-
-    @OneToOne(fetch = FetchType.LAZY)
+    //(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "plan_id")
+    @JsonIgnore
     private Plan plan;
 
     // 글 작성자
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private Member author;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Participate> participateList = new ArrayList<>();
 
     public void update(PostUpdateRequest request) {
         this.title = request.getTitle();
