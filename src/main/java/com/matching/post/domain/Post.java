@@ -4,11 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.matching.common.domain.BaseEntity;
 import com.matching.member.domain.Member;
 import com.matching.participate.domain.Participate;
+import com.matching.photo.domain.Photo;
 import com.matching.plan.domain.Plan;
 import com.matching.post.dto.PostRequest;
 import com.matching.post.dto.PostUpdateRequest;
 import lombok.*;
 import org.hibernate.envers.AuditOverride;
+import org.springframework.data.jpa.repository.EntityGraph;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -22,6 +24,16 @@ import java.util.List;
 @AuditOverride(forClass = BaseEntity.class)
 @Entity
 @Table(name = "post")
+//@NamedEntityGraph(
+//        name = "Post.photoParticipate",
+//        attributeNodes = {
+//                @NamedAttributeNode("author"),
+//                @NamedAttributeNode("plan"),
+//                @NamedAttributeNode("participateList"),
+//                @NamedAttributeNode(value = "photoList",subgraph = "photoList")
+//        },
+//        subgraphs = @NamedSubgraph(name ="photoList",attributeNodes = {@NamedAttributeNode("photo")})
+//)
 public class Post extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,9 +57,13 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "user_id")
     private Member author;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Participate> participateList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Photo> photoList = new ArrayList<>();
 
     public void update(PostUpdateRequest request) {
         this.title = request.getTitle();

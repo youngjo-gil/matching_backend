@@ -6,6 +6,7 @@ import com.matching.post.dto.PostRequest;
 import com.matching.post.dto.PostResponse;
 import com.matching.post.dto.PostUpdateRequest;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.web.multipart.MultipartFile;
 

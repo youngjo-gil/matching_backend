@@ -12,7 +12,6 @@ import com.matching.plan.dto.PlanRequest;
 import com.matching.plan.repository.PlanRepository;
 import com.matching.post.domain.Category;
 import com.matching.post.domain.Post;
-import com.matching.post.domain.PostDocument;
 import com.matching.post.dto.PostRequest;
 import com.matching.post.dto.PostResponse;
 import com.matching.post.dto.PostUpdateRequest;
@@ -20,8 +19,7 @@ import com.matching.post.repository.CategoryRepository;
 import com.matching.post.repository.PostRepository;
 import com.matching.post.service.PostService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -99,18 +97,18 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<PostResponse> getPostByCategoryAsc(Long categoryId) {
-        List<Post> postList = postRepository.findAllOrderByParticipantCountByCategoryAsc(categoryId);
+        int pageNumber = 0; // 가져올 페이지 번호 (0부터 시작)
+        int pageSize = 10; // 페이지당 결과 수
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+
         List<PostResponse> responses = new ArrayList<>();
+        Page<Post> postPage = postRepository.findAllOrderByParticipantByPhotoCountByCategoryDesc(categoryId, pageable);
 
-        for (Post post: postList) {
-            List<Photo> photoList = photoRepository.findAllByPost_Id(post.getId())
-                    .orElse(null);
-            List<String> test = photoList.stream().map(item -> item.getPathname())
-                    .collect(Collectors.toList());
+        for (Post post: postPage) {
+            List<String> photoList = post.getPhotoList().stream().map(item -> item.getPathname()).collect(Collectors.toList());
 
-            responses = postList.stream().map(list -> PostResponse.from(list, test )).collect(Collectors.toList());
+            responses.add(PostResponse.from(post, photoList));
         }
-
         return responses;
     }
 
