@@ -2,6 +2,7 @@ package com.matching.post.controller;
 
 import com.matching.common.dto.ResponseDto;
 import com.matching.common.utils.ResponseUtil;
+import com.matching.post.dto.PostCategoryRequest;
 import com.matching.post.dto.PostRequest;
 import com.matching.post.dto.PostResponse;
 import com.matching.post.dto.PostUpdateRequest;
@@ -52,11 +53,11 @@ public class PostController {
         return ResponseUtil.SUCCESS("글 수정 성공", id);
     }
 
-    @GetMapping("/getListAsc")
-    public ResponseDto getTest() {
-        Long categoryId = 1L;
-
-        return ResponseUtil.SUCCESS("조회성공", postService.getPostByCategoryAsc(categoryId));
+    @GetMapping("/categoryList")
+    public ResponseDto getPostByCategoryId(
+            @RequestBody PostCategoryRequest request
+            ) {
+        return ResponseUtil.SUCCESS("조회성공", postService.getPostByCategoryDesc(request.getCategoryId()));
     }
 
     @DeleteMapping("/{postId}")

@@ -96,20 +96,20 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostResponse> getPostByCategoryAsc(Long categoryId) {
+    public Page<PostResponse> getPostByCategoryDesc(Long categoryId) {
         int pageNumber = 0; // 가져올 페이지 번호 (0부터 시작)
         int pageSize = 10; // 페이지당 결과 수
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-
         List<PostResponse> responses = new ArrayList<>();
+
         Page<Post> postPage = postRepository.findAllOrderByParticipantByPhotoCountByCategoryDesc(categoryId, pageable);
 
-        for (Post post: postPage) {
-            List<String> photoList = post.getPhotoList().stream().map(item -> item.getPathname()).collect(Collectors.toList());
-
-            responses.add(PostResponse.from(post, photoList));
-        }
-        return responses;
+        return postPage.map(post -> {
+            List<String> photoList = post.getPhotoList().stream()
+                    .map(Photo::getPathname)
+                    .collect(Collectors.toList());
+            return PostResponse.from(post, photoList);
+        });
     }
 
     @Transactional
