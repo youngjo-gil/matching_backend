@@ -24,16 +24,6 @@ import java.util.List;
 @AuditOverride(forClass = BaseEntity.class)
 @Entity
 @Table(name = "post")
-//@NamedEntityGraph(
-//        name = "Post.photoParticipate",
-//        attributeNodes = {
-//                @NamedAttributeNode("author"),
-//                @NamedAttributeNode("plan"),
-//                @NamedAttributeNode("participateList"),
-//                @NamedAttributeNode(value = "photoList",subgraph = "photoList")
-//        },
-//        subgraphs = @NamedSubgraph(name ="photoList",attributeNodes = {@NamedAttributeNode("photo")})
-//)
 public class Post extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,12 +32,11 @@ public class Post extends BaseEntity {
     private String title;
     private String content;
 
-    //(fetch = FetchType.LAZY)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "plan_id")
     @JsonIgnore
     private Plan plan;
@@ -57,11 +46,11 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "user_id")
     private Member author;
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JsonIgnore
     private List<Participate> participateList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JsonIgnore
     private List<Photo> photoList = new ArrayList<>();
 

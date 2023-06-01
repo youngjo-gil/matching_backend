@@ -13,6 +13,7 @@ public interface PostService {
     Long writePost(PostRequest parameter, String id, List<MultipartFile> multipartFile);
     PostResponse getPost(Long id);
     Long updatePost(Long postId, Long userId, PostUpdateRequest parameter);
+    void deletePost(Long postId, Long userId);
 
     Page<PostResponse> getPostByCategoryDesc(Long categoryId);
     Long participate(PlanRequest parameter, String email, Long postId);

@@ -96,6 +96,23 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public void deletePost(Long postId, Long userId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 포스트가 존재하지 않습니다."));
+        Member member = memberRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("회원 정보가 없습니다."));
+
+        Participate participate = participateRepository.findByParticipate_IdAndPost_Id(member.getId(), post.getId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 포스트 참가자가 아닙니다."));
+
+        if(!participate.getStatus().equals(Participate.ParticipateStatus.LEADER)) {
+            throw new IllegalArgumentException("해당 포스트 리더가 아닙니다.");
+        } else {
+            postRepository.deleteById(post.getId());
+        }
+    }
+
+    @Override
     public Page<PostResponse> getPostByCategoryDesc(Long categoryId) {
         int pageNumber = 0; // 가져올 페이지 번호 (0부터 시작)
         int pageSize = 10; // 페이지당 결과 수

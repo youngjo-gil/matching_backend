@@ -55,17 +55,18 @@ public class PostController {
 
     @GetMapping("/categoryList")
     public ResponseDto getPostByCategoryId(
-            @RequestBody PostCategoryRequest request
-            ) {
+        @RequestBody PostCategoryRequest request
+    ) {
         return ResponseUtil.SUCCESS("조회성공", postService.getPostByCategoryDesc(request.getCategoryId()));
     }
 
     @DeleteMapping("/{postId}")
-    public ResponseEntity<?> deletePost(
+    public ResponseDto deletePost(
         @PathVariable Long postId,
         @AuthenticationPrincipal User user
     ) {
-        return null;
+        postService.deletePost(postId, Long.parseLong(user.getUsername()));
+        return ResponseUtil.SUCCESS("삭제성공", true);
     }
 
 }
