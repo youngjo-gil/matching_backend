@@ -25,5 +25,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     )
     Page<Post> findAllOrderByParticipantByPhotoCountByCategoryDesc(@Param("categoryId") Long categoryId, Pageable pageable);
 
+    // 게시글 제목 별 검색
+
 }
 

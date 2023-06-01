@@ -14,9 +14,11 @@ import com.matching.post.domain.Category;
 import com.matching.post.domain.Post;
 import com.matching.post.dto.PostRequest;
 import com.matching.post.dto.PostResponse;
+import com.matching.post.dto.PostSearchRequest;
 import com.matching.post.dto.PostUpdateRequest;
 import com.matching.post.repository.CategoryRepository;
 import com.matching.post.repository.PostRepository;
+import com.matching.post.repository.PostRepositoryQuerydsl;
 import com.matching.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
@@ -37,6 +39,7 @@ public class PostServiceImpl implements PostService {
     private final ParticipateRepository participateRepository;
     private final CategoryRepository categoryRepository;
     private final PhotoRepository photoRepository;
+    private final PostRepositoryQuerydsl postRepositoryQuerydsl;
 
     private final PhotoService photoService;
 
@@ -72,6 +75,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Transactional
     public PostResponse getPost(Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
@@ -82,6 +86,17 @@ public class PostServiceImpl implements PostService {
                 .collect(Collectors.toList());
 
         return PostResponse.from(post, test);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<PostResponse> getPostSearchList(PostSearchRequest parameter) {
+        return PostResponse.fromEntitiesPage(
+                postRepositoryQuerydsl.findAll(
+                        PageRequest.of(parameter.getPageNum(), parameter.getPageSize()),
+                        parameter.getKeyword()
+                )
+        );
     }
 
     @Transactional

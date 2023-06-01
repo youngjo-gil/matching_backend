@@ -2,10 +2,7 @@ package com.matching.post.controller;
 
 import com.matching.common.dto.ResponseDto;
 import com.matching.common.utils.ResponseUtil;
-import com.matching.post.dto.PostCategoryRequest;
-import com.matching.post.dto.PostRequest;
-import com.matching.post.dto.PostResponse;
-import com.matching.post.dto.PostUpdateRequest;
+import com.matching.post.dto.*;
 import com.matching.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +11,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -69,4 +67,11 @@ public class PostController {
         return ResponseUtil.SUCCESS("삭제성공", true);
     }
 
+
+    @GetMapping("/search")
+    public ResponseDto getPostSearchList(
+            @RequestBody @Valid PostSearchRequest parameter
+    ) {
+        return ResponseUtil.SUCCESS("조회성공", postService.getPostSearchList(parameter));
+    }
 }
