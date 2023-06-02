@@ -74,4 +74,13 @@ public class PostController {
     ) {
         return ResponseUtil.SUCCESS("조회성공", postService.getPostSearchList(parameter));
     }
+
+    // 참가 중인 post 조회
+    @GetMapping("/myPage/participant")
+    public ResponseDto getPostByParticipant(
+            @AuthenticationPrincipal User user
+    ) {
+        Long memberId = Long.parseLong(user.getUsername());
+        return ResponseUtil.SUCCESS("목록 조회 성공", postService.getPostByParticipant(memberId));
+    }
 }

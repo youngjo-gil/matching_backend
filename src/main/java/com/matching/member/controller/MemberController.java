@@ -7,6 +7,7 @@ import com.matching.member.dto.MemberUpdateRequest;
 import com.matching.member.dto.SignInRequest;
 import com.matching.member.dto.SignUpRequest;
 import com.matching.member.service.MemberService;
+import com.matching.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
@@ -89,4 +90,8 @@ public class MemberController {
     ) {
         return ResponseUtil.SUCCESS("회원 탈퇴 완료", memberService.withdraw(request, Long.parseLong(user.getUsername())));
     }
+
+    // 작성한 글 조회
+
+
 }

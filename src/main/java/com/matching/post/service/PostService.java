@@ -15,9 +15,11 @@ public interface PostService {
     PostResponse getPost(Long id);
     Long updatePost(Long postId, Long userId, PostUpdateRequest parameter);
     void deletePost(Long postId, Long userId);
-
     Page<PostResponse> getPostByCategoryDesc(Long categoryId);
     Page<PostResponse> getPostSearchList(PostSearchRequest parameter);
+
+    // 참가 중인 post 조회
+    Page<PostResponse> getPostByParticipant(Long memberId);
     Long participate(PlanRequest parameter, String email, Long postId);
     void completePlan(String email, Long planId);
 }

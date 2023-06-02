@@ -13,6 +13,8 @@ import java.util.Optional;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
     Optional<Post> findByIdAndAuthor_Id(Long postId, Long userId);
+
+    // 카테고리별 참가자 순 조회
     @Query(value = "select * from post p\n" +
             "    left join participate p2\n" +
             "        on p.post_id = p2.post_id\n" +
@@ -25,7 +27,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     )
     Page<Post> findAllOrderByParticipantByPhotoCountByCategoryDesc(@Param("categoryId") Long categoryId, Pageable pageable);
 
-    // 게시글 제목 별 검색
+    // 해당 회원 참가중인 post 조회
+    @Query(value = "SELECT p FROM Post p LEFT JOIN p.participateList p2 WHERE p2.participate.id = :memberId AND (p2.status = 'LEADER' OR p2.status = 'ADMISSION') ORDER BY p.createdAt DESC")
+    Page<Post> findAllOrderByParticipateByPhotoCreatedAtDesc(@Param("memberId") Long memberId, Pageable pageable);
 
 }
 
