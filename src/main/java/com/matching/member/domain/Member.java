@@ -31,18 +31,24 @@ public class Member extends BaseEntity implements UserDetails {
     private String email;
     private String password;
     private String name;
-    private String nickname;
+    private String organization;
+    private String job;
     private String profileImageUrl;
     @Enumerated(EnumType.STRING)
     private MemberStatus status;
-
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MemberSkill> memberSkills = new ArrayList<>();
+
     public void update(MemberUpdateRequest parameter) {
         this.password = (parameter.getPassword() == null) ? this.getPassword() : parameter.getPassword();
-        this.nickname = (parameter.getNickname() == null) ? this.getNickname() : parameter.getNickname();
         this.profileImageUrl = (parameter.getProfileImageUrl() == null) ? this.getProfileImageUrl() : parameter.getProfileImageUrl();
+        this.organization = (parameter.getOrganization() == null) ? this.getOrganization() : parameter.getOrganization();
+        this.job = (parameter.getJob() == null) ? this.getJob() : parameter.getJob();
+
+
     }
 
     public static Member from(SignUpRequest parameter) {
@@ -50,7 +56,6 @@ public class Member extends BaseEntity implements UserDetails {
                 .email(parameter.getEmail())
                 .password(parameter.getPassword())
                 .name(parameter.getName())
-                .nickname(parameter.getNickname())
                 .profileImageUrl(parameter.getProfileImageUrl())
                 .status(MemberStatus.REGISTERED)
                 .build();

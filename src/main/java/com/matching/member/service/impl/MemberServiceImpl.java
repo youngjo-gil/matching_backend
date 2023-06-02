@@ -1,49 +1,43 @@
 package com.matching.member.service.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.matching.MatchingApplication;
 import com.matching.aws.service.AwsS3Service;
 import com.matching.common.config.JwtTokenProvider;
-import com.matching.member.domain.Member;
-import com.matching.member.domain.MemberStatus;
-import com.matching.member.domain.RefreshToken;
+import com.matching.member.domain.*;
 import com.matching.member.dto.MemberResponse;
+import com.matching.member.dto.MemberUpdateRequest;
 import com.matching.member.dto.SignInRequest;
 import com.matching.member.dto.SignUpRequest;
-import com.matching.member.dto.MemberUpdateRequest;
 import com.matching.member.repository.MemberRepository;
 import com.matching.member.repository.RefreshTokenRepository;
+import com.matching.member.repository.SkillRepository;
 import com.matching.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
+    private final SkillRepository skillRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
     private final AwsS3Service awsS3Service;
 
-//    private final Map memberResponseMap = new HashMap<>();
     @Value("${jwt.refresh-token-expire-time}")
     int expiredTime;
     private final Logger logger = LoggerFactory.getLogger(MatchingApplication.class);
@@ -148,12 +142,24 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("해당 회원이 없습니다."));
 
+        member.getMemberSkills().clear();
+
         String accessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getRoles());
 
-        List<String> uploadFile = awsS3Service.upload(multipartFile);
-
         if(multipartFile != null) {
+            List<String> uploadFile = awsS3Service.upload(multipartFile);
             parameter.setProfileImageUrl(uploadFile.get(0));
+        }
+
+        List<Long> memberSkillsId = parameter.getMemberSkillsId();
+
+        if(memberSkillsId != null && !memberSkillsId.isEmpty()) {
+            List<Skill> skills = skillRepository.findAllById(memberSkillsId);
+
+            for (Skill skill: skills) {
+                MemberSkill memberSkill = MemberSkill.from(skill, member);
+                member.getMemberSkills().add(memberSkill);
+            }
         }
 
         member.update(parameter);
@@ -161,6 +167,12 @@ public class MemberServiceImpl implements MemberService {
         return MemberResponse.of(member, accessToken);
     }
 
+    /**
+     * 로그아웃
+     * @param request
+     * @param memberId
+     * @return
+     */
     @Override
     public boolean logout(HttpServletRequest request, Long memberId) {
         Member member = memberRepository.findById(memberId)
@@ -173,6 +185,12 @@ public class MemberServiceImpl implements MemberService {
     }
 
 
+    /**
+     * 회원 탈퇴
+     * @param request
+     * @param memberId
+     * @return
+     */
     @Override
     public boolean withdraw(HttpServletRequest request, Long memberId) {
         Member member = memberRepository.findById(memberId)

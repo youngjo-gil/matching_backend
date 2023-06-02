@@ -7,19 +7,15 @@ import com.matching.member.dto.MemberUpdateRequest;
 import com.matching.member.dto.SignInRequest;
 import com.matching.member.dto.SignUpRequest;
 import com.matching.member.service.MemberService;
-import com.matching.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
