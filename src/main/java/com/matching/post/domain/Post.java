@@ -1,14 +1,20 @@
 package com.matching.post.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.matching.common.domain.BaseEntity;
 import com.matching.member.domain.Member;
+import com.matching.participate.domain.Participate;
+import com.matching.photo.domain.Photo;
 import com.matching.plan.domain.Plan;
 import com.matching.post.dto.PostRequest;
 import com.matching.post.dto.PostUpdateRequest;
 import lombok.*;
 import org.hibernate.envers.AuditOverride;
+import org.springframework.data.jpa.repository.EntityGraph;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -26,13 +32,13 @@ public class Post extends BaseEntity {
     private String title;
     private String content;
 
-
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "plan_id")
+    @JsonIgnore
     private Plan plan;
 
     // 글 작성자
@@ -40,16 +46,24 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "user_id")
     private Member author;
 
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @JsonIgnore
+    private List<Participate> participateList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @JsonIgnore
+    private List<Photo> photoList = new ArrayList<>();
+
     public void update(PostUpdateRequest request) {
         this.title = request.getTitle();
         this.content = request.getContent();
     }
 
-    public static Post from(PostRequest parameter) {
+    public static Post from(PostRequest parameter, Category category) {
         return Post.builder()
                 .title(parameter.getTitle())
                 .content(parameter.getContent())
-                .category(parameter.getCategory())
+                .category(category)
                 .author(parameter.getMember())
                 .build();
     }

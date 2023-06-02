@@ -18,7 +18,7 @@ public class PostRequest {
     private String title;
     private String content;
     private Member member;
-    private Category category;
+    private Long categoryId;
 
     /**
      * 목표
