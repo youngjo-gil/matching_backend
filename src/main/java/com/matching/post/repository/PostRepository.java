@@ -31,5 +31,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query(value = "SELECT p FROM Post p LEFT JOIN p.participateList p2 WHERE p2.participate.id = :memberId AND (p2.status = 'LEADER' OR p2.status = 'ADMISSION') ORDER BY p.createdAt DESC")
     Page<Post> findAllOrderByParticipateByPhotoCreatedAtDesc(@Param("memberId") Long memberId, Pageable pageable);
 
+    // 작성한 글 조회
+    Page<Post> findAllByAuthor_Id(Long memberId, Pageable pageable);
+
 }
 

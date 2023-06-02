@@ -20,6 +20,8 @@ public interface PostService {
 
     // 참가 중인 post 조회
     Page<PostResponse> getPostByParticipant(Long memberId);
+    // 작성한 글 조회
+    Page<PostResponse> getPostByWrite(Long memberId);
     Long participate(PlanRequest parameter, String email, Long postId);
     void completePlan(String email, Long planId);
 }

@@ -83,4 +83,13 @@ public class PostController {
         Long memberId = Long.parseLong(user.getUsername());
         return ResponseUtil.SUCCESS("목록 조회 성공", postService.getPostByParticipant(memberId));
     }
+
+    // 작성한 post 조회
+    @GetMapping("/myPage/write")
+    public ResponseDto getPostByWrite(
+            @AuthenticationPrincipal User user
+    ) {
+        Long memberId = Long.parseLong(user.getUsername());
+        return ResponseUtil.SUCCESS("목록 조회 성공", postService.getPostByWrite(memberId));
+    }
 }
