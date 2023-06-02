@@ -6,7 +6,6 @@ import lombok.Setter;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
@@ -19,7 +18,5 @@ public class SignUpRequest {
     private String password;
     @NotBlank(message = "이름은 필수입니다.")
     private String name;
-    @NotBlank(message = "닉네임은 필수입니다.")
-    private String nickname;
     private String profileImageUrl;
 }

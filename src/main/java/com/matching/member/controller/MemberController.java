@@ -13,12 +13,9 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -89,4 +86,8 @@ public class MemberController {
     ) {
         return ResponseUtil.SUCCESS("회원 탈퇴 완료", memberService.withdraw(request, Long.parseLong(user.getUsername())));
     }
+
+    // 작성한 글 조회
+
+
 }

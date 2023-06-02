@@ -36,7 +36,6 @@ public class PostResponse {
                 .content(post.getContent())
                 .categoryName(post.getCategory().getCategoryName())
                 .plan(post.getPlan().getDetail())
-                .author(post.getAuthor().getNickname())
                 .createdAt(post.getCreatedAt())
                 .startedAt(post.getPlan().getStartedAt())
                 .endedAt(post.getPlan().getEndedAt())

@@ -99,6 +99,33 @@ public class PostServiceImpl implements PostService {
         );
     }
 
+    // 참가중인 Post 조회ㅔ
+    @Override
+    public Page<PostResponse> getPostByParticipant(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 회원이 없습니다."));
+        return PostResponse.fromEntitiesPage(
+                postRepository.findAllOrderByParticipateByPhotoCreatedAtDesc(
+                        member.getId(),
+                        PageRequest.of(0, 5)
+                )
+        );
+    }
+
+    // 작성한 글 조회
+    @Override
+    public Page<PostResponse> getPostByWrite(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 회원이 없습니다."));
+
+        return PostResponse.fromEntitiesPage(
+                postRepository.findAllByAuthor_Id(
+                        member.getId(),
+                        PageRequest.of(0, 5, Sort.by("createdAt").descending())
+                )
+        );
+    }
+
     @Transactional
     @Override
     public Long updatePost(Long postId, Long userId, PostUpdateRequest parameter) {

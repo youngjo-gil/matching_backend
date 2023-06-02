@@ -26,7 +26,6 @@ public class ChatMessageDto implements Serializable {
                 .chatRoomId(parameter.getChatRoom().getId())
                 .message(parameter.getMessage())
                 .userId(parameter.getMember().getId())
-                .nickname(parameter.getMember().getNickname())
                 .build();
     }
 }
