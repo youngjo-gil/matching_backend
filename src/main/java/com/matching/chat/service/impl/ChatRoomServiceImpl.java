@@ -7,8 +7,8 @@ import com.matching.chat.repository.ChatRoomRepository;
 import com.matching.chat.service.ChatRoomService;
 import com.matching.member.domain.Member;
 import com.matching.member.repository.MemberRepository;
-import com.matching.post.domain.Post;
-import com.matching.post.repository.PostRepository;
+import com.matching.post.domain.ProjectPost;
+import com.matching.post.repository.ProjectPostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 public class ChatRoomServiceImpl implements ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
-    private final PostRepository postRepository;
+    private final ProjectPostRepository projectPostRepository;
     private final MemberRepository memberRepository;
     @Override
     public ChatRoom getChatRoom(Long chatRoomId) {
@@ -32,16 +32,16 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
     @Override
     public Long createRoom(Long postId, Long userId) {
-        Post post = postRepository.findByIdAndAuthor_Id(postId, userId)
+        ProjectPost projectPost = projectPostRepository.findByIdAndAuthor_Id(postId, userId)
                 .orElseThrow(() -> new IllegalArgumentException("글작성자만 채팅방 개설이 가능합니다."));
 
-        if(!post.getAuthor().getId().equals(userId)) {
+        if(!projectPost.getAuthor().getId().equals(userId)) {
             throw new IllegalArgumentException("");
         }
 
         return chatRoomRepository.save(ChatRoom.builder()
-                .member(post.getAuthor())
-                .post(post)
+                .member(projectPost.getAuthor())
+                .projectPost(projectPost)
                 .build()).getId();
     }
 

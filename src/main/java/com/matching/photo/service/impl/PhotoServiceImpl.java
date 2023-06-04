@@ -4,7 +4,7 @@ import com.matching.aws.service.AwsS3Service;
 import com.matching.photo.domain.Photo;
 import com.matching.photo.repository.PhotoRepository;
 import com.matching.photo.service.PhotoService;
-import com.matching.post.domain.Post;
+import com.matching.post.domain.ProjectPost;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,11 +17,11 @@ public class PhotoServiceImpl implements PhotoService {
     private final AwsS3Service awsS3Service;
     private final PhotoRepository photoRepository;
     @Override
-    public void savePhoto(Post post, List<MultipartFile> multipartFile) {
+    public void savePhoto(ProjectPost projectPost, List<MultipartFile> multipartFile) {
         List<String> imgPaths = awsS3Service.upload(multipartFile);
 
         for (String img : imgPaths) {
-            Photo photo = Photo.of(post, img);
+            Photo photo = Photo.of(projectPost, img);
             photoRepository.save(photo);
         }
     }

@@ -1,13 +1,12 @@
 package com.matching.chat.domain;
 
 import com.matching.common.domain.BaseEntity;
-import com.matching.post.domain.Post;
+import com.matching.post.domain.ProjectPost;
 import com.matching.member.domain.Member;
 import lombok.*;
 import org.hibernate.envers.AuditOverride;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Getter
 @Setter
@@ -23,7 +22,7 @@ public class ChatRoom extends BaseEntity {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
-    private Post post;
+    private ProjectPost projectPost;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "member_id")

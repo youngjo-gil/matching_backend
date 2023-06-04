@@ -1,6 +1,6 @@
 package com.matching.post.repository;
 
-import com.matching.post.domain.Post;
+import com.matching.post.domain.ProjectPost;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -20,13 +20,13 @@ public class PostRepositoryQuerydslImpl implements PostRepositoryQuerydsl {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Page<Post> findAll(Pageable pageable, String keyword) {
+    public Page<ProjectPost> findAll(Pageable pageable, String keyword) {
         return new PageImpl<>(
                 searchPost(keyword, pageable)
         );
     }
 
-    private List<Post> searchPost(String keyword, Pageable pageable) {
+    private List<ProjectPost> searchPost(String keyword, Pageable pageable) {
         return jpaQueryFactory
                 .selectFrom(post)
                 .where(

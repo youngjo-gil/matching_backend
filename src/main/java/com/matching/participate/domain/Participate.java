@@ -1,7 +1,7 @@
 package com.matching.participate.domain;
 
 import com.matching.member.domain.Member;
-import com.matching.post.domain.Post;
+import com.matching.post.domain.ProjectPost;
 import lombok.*;
 
 import javax.persistence.*;
@@ -23,7 +23,7 @@ public class Participate {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
-    private Post post;
+    private ProjectPost projectPost;
 
     @Enumerated(EnumType.STRING)
     private ParticipateStatus status;
@@ -41,10 +41,10 @@ public class Participate {
     }
 
 
-    public static Participate from(Member member, Post post) {
+    public static Participate from(Member member, ProjectPost projectPost) {
         return Participate.builder()
                 .participate(member)
-                .post(post)
+                .projectPost(projectPost)
                 .status(ParticipateStatus.BEFORE)
                 .build();
     }

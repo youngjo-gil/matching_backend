@@ -7,7 +7,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostUpdateRequest {
+public class ProjectPostUpdateRequest {
     private String title;
     private String content;
 }

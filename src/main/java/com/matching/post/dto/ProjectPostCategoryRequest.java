@@ -5,6 +5,6 @@ import lombok.*;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostCategoryRequest {
+public class ProjectPostCategoryRequest {
     private Long categoryId;
 }

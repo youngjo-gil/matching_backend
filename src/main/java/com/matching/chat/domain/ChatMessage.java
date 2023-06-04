@@ -2,9 +2,7 @@ package com.matching.chat.domain;
 
 import com.matching.common.domain.BaseEntity;
 import com.matching.member.domain.Member;
-import com.matching.post.domain.Post;
 import lombok.*;
-import org.apache.catalina.User;
 import org.hibernate.envers.AuditOverride;
 
 import javax.persistence.*;

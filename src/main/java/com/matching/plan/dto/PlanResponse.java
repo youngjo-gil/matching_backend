@@ -2,11 +2,10 @@ package com.matching.plan.dto;
 
 import com.matching.member.domain.Member;
 import com.matching.plan.domain.Plan;
-import com.matching.post.domain.Post;
+import com.matching.post.domain.ProjectPost;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -23,14 +22,14 @@ public class PlanResponse {
     private Long postId;
     private List<Member> participantList;
 
-    public static PlanResponse of(Plan plan, Post post) {
+    public static PlanResponse of(Plan plan, ProjectPost projectPost) {
         return PlanResponse.builder()
                 .id(plan.getId())
                 .detail(plan.getDetail())
                 .completed(plan.isCompleted())
                 .startedAt(plan.getStartedAt())
                 .endedAt(plan.getEndedAt())
-                .postId(post.getId())
+                .postId(projectPost.getId())
                 .build();
     }
 }

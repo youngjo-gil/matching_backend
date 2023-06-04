@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostPhoto {
+public class ProjectPostPhoto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_photo_id")
@@ -29,7 +29,7 @@ public class PostPhoto {
 
     @ManyToOne
     @JoinColumn(name = "post_id")
-    private Post post;
+    private ProjectPost projectPost;
 
     @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "photo_id")

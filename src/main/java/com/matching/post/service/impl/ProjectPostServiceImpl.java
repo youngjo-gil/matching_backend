@@ -11,15 +11,15 @@ import com.matching.plan.domain.Plan;
 import com.matching.plan.dto.PlanRequest;
 import com.matching.plan.repository.PlanRepository;
 import com.matching.post.domain.Category;
-import com.matching.post.domain.Post;
-import com.matching.post.dto.PostRequest;
-import com.matching.post.dto.PostResponse;
+import com.matching.post.domain.ProjectPost;
+import com.matching.post.dto.ProjectPostRequest;
+import com.matching.post.dto.ProjectPostResponse;
 import com.matching.post.dto.PostSearchRequest;
-import com.matching.post.dto.PostUpdateRequest;
+import com.matching.post.dto.ProjectPostUpdateRequest;
 import com.matching.post.repository.CategoryRepository;
-import com.matching.post.repository.PostRepository;
+import com.matching.post.repository.ProjectPostRepository;
 import com.matching.post.repository.PostRepositoryQuerydsl;
-import com.matching.post.service.PostService;
+import com.matching.post.service.ProjectPostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -32,8 +32,8 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class PostServiceImpl implements PostService {
-    private final PostRepository postRepository;
+public class ProjectPostServiceImpl implements ProjectPostService {
+    private final ProjectPostRepository projectPostRepository;
     private final MemberRepository memberRepository;
     private final PlanRepository planRepository;
     private final ParticipateRepository participateRepository;
@@ -48,7 +48,7 @@ public class PostServiceImpl implements PostService {
 
     @Transactional
     @Override
-    public Long writePost(PostRequest parameter, String id, List<MultipartFile> multipartFile) {
+    public Long writePost(ProjectPostRequest parameter, String id, List<MultipartFile> multipartFile) {
         Member member = memberRepository.findById(Long.parseLong(id))
                         .orElseThrow(() -> new RuntimeException("회원이 없습니다."));
         Category category = categoryRepository.findById(parameter.getCategoryId())
@@ -57,41 +57,41 @@ public class PostServiceImpl implements PostService {
 
         parameter.setMember(member);
 
-        Post post = postRepository.save(Post.from(parameter, category));
-        Plan plan = planRepository.save(Plan.from(parameter, member, post));
+        ProjectPost projectPost = projectPostRepository.save(ProjectPost.from(parameter, category));
+        Plan plan = planRepository.save(Plan.from(parameter, member, projectPost));
 
-        Participate participate = participateRepository.save(Participate.from(member, post));
+        Participate participate = participateRepository.save(Participate.from(member, projectPost));
 
         if(multipartFile != null) {
             if(!multipartFile.isEmpty()) {
-                photoService.savePhoto(post, multipartFile);
+                photoService.savePhoto(projectPost, multipartFile);
             }
         }
 
-        post.setPlan(plan);
+        projectPost.setPlan(plan);
         participate.setStatus(Participate.ParticipateStatus.LEADER);
 
-        return post.getId();
+        return projectPost.getId();
     }
 
     @Override
     @Transactional
-    public PostResponse getPost(Long id) {
-        Post post = postRepository.findById(id)
+    public ProjectPostResponse getPost(Long id) {
+        ProjectPost projectPost = projectPostRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
 
-        List<Photo> photoList = photoRepository.findAllByPost_Id(post.getId())
+        List<Photo> photoList = photoRepository.findAllByPost_Id(projectPost.getId())
                 .orElse(null);
         List<String> test = photoList.stream().map(item -> item.getPathname())
                 .collect(Collectors.toList());
 
-        return PostResponse.from(post, test);
+        return ProjectPostResponse.from(projectPost, test);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<PostResponse> getPostSearchList(PostSearchRequest parameter) {
-        return PostResponse.fromEntitiesPage(
+    public Page<ProjectPostResponse> getPostSearchList(PostSearchRequest parameter) {
+        return ProjectPostResponse.fromEntitiesPage(
                 postRepositoryQuerydsl.findAll(
                         PageRequest.of(parameter.getPageNum(), parameter.getPageSize()),
                         parameter.getKeyword()
@@ -99,13 +99,13 @@ public class PostServiceImpl implements PostService {
         );
     }
 
-    // 참가중인 Post 조회ㅔ
+    // 참가중인 ProjectPost 조회ㅔ
     @Override
-    public Page<PostResponse> getPostByParticipant(Long memberId) {
+    public Page<ProjectPostResponse> getPostByParticipant(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 회원이 없습니다."));
-        return PostResponse.fromEntitiesPage(
-                postRepository.findAllOrderByParticipateByPhotoCreatedAtDesc(
+        return ProjectPostResponse.fromEntitiesPage(
+                projectPostRepository.findAllOrderByParticipateByPhotoCreatedAtDesc(
                         member.getId(),
                         PageRequest.of(0, 5)
                 )
@@ -114,12 +114,12 @@ public class PostServiceImpl implements PostService {
 
     // 작성한 글 조회
     @Override
-    public Page<PostResponse> getPostByWrite(Long memberId) {
+    public Page<ProjectPostResponse> getPostByWrite(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 회원이 없습니다."));
 
-        return PostResponse.fromEntitiesPage(
-                postRepository.findAllByAuthor_Id(
+        return ProjectPostResponse.fromEntitiesPage(
+                projectPostRepository.findAllByAuthor_Id(
                         member.getId(),
                         PageRequest.of(0, 5, Sort.by("createdAt").descending())
                 )
@@ -128,46 +128,46 @@ public class PostServiceImpl implements PostService {
 
     @Transactional
     @Override
-    public Long updatePost(Long postId, Long userId, PostUpdateRequest parameter) {
-        Post post = postRepository.findByIdAndAuthor_Id(postId, userId)
+    public Long updatePost(Long postId, Long userId, ProjectPostUpdateRequest parameter) {
+        ProjectPost projectPost = projectPostRepository.findByIdAndAuthor_Id(postId, userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 포스트가 존재하지 않습니다."));
 
-        post.update(parameter);
+        projectPost.update(parameter);
 
-        return post.getId();
+        return projectPost.getId();
     }
 
     @Override
     public void deletePost(Long postId, Long userId) {
-        Post post = postRepository.findById(postId)
+        ProjectPost projectPost = projectPostRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 포스트가 존재하지 않습니다."));
         Member member = memberRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("회원 정보가 없습니다."));
 
-        Participate participate = participateRepository.findByParticipate_IdAndPost_Id(member.getId(), post.getId())
+        Participate participate = participateRepository.findByParticipate_IdAndPost_Id(member.getId(), projectPost.getId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 포스트 참가자가 아닙니다."));
 
         if(!participate.getStatus().equals(Participate.ParticipateStatus.LEADER)) {
             throw new IllegalArgumentException("해당 포스트 리더가 아닙니다.");
         } else {
-            postRepository.deleteById(post.getId());
+            projectPostRepository.deleteById(projectPost.getId());
         }
     }
 
     @Override
-    public Page<PostResponse> getPostByCategoryDesc(Long categoryId) {
+    public Page<ProjectPostResponse> getPostByCategoryDesc(Long categoryId) {
         int pageNumber = 0; // 가져올 페이지 번호 (0부터 시작)
         int pageSize = 10; // 페이지당 결과 수
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        List<PostResponse> responses = new ArrayList<>();
+        List<ProjectPostResponse> responses = new ArrayList<>();
 
-        Page<Post> postPage = postRepository.findAllOrderByParticipantByPhotoCountByCategoryDesc(categoryId, pageable);
+        Page<ProjectPost> postPage = projectPostRepository.findAllOrderByParticipantByPhotoCountByCategoryDesc(categoryId, pageable);
 
         return postPage.map(post -> {
             List<String> photoList = post.getPhotoList().stream()
                     .map(Photo::getPathname)
                     .collect(Collectors.toList());
-            return PostResponse.from(post, photoList);
+            return ProjectPostResponse.from(post, photoList);
         });
     }
 
@@ -176,11 +176,11 @@ public class PostServiceImpl implements PostService {
     public Long participate(PlanRequest parameter, String email, Long postId) {
         Member participant = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
-        Post post = postRepository.findById(postId)
+        ProjectPost projectPost = projectPostRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
 
 
-//        return planRepository.save(Plan.from(parameter, participant, post)).getId();
+//        return planRepository.save(Plan.from(parameter, participant, projectPost)).getId();
 
         return null;
     }

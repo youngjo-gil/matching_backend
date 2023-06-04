@@ -1,6 +1,6 @@
 package com.matching.photo.domain;
 
-import com.matching.post.domain.Post;
+import com.matching.post.domain.ProjectPost;
 import lombok.*;
 
 import javax.persistence.*;
@@ -21,11 +21,11 @@ public class Photo {
 
     @ManyToOne
     @JoinColumn(name = "post_id")
-    private Post post;
+    private ProjectPost projectPost;
 
-    public static Photo of(Post post, String pathname) {
+    public static Photo of(ProjectPost projectPost, String pathname) {
         return Photo.builder()
-                .post(post)
+                .projectPost(projectPost)
                 .pathname(pathname)
                 .build();
     }
