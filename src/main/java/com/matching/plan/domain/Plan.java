@@ -1,15 +1,12 @@
 package com.matching.plan.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.matching.member.domain.Member;
-import com.matching.plan.dto.PlanRequest;
-import com.matching.post.domain.Post;
-import com.matching.post.dto.PostRequest;
+import com.matching.post.domain.ProjectPost;
+import com.matching.post.dto.ProjectPostRequest;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Optional;
 
 @Entity
 @Getter
@@ -30,14 +27,14 @@ public class Plan {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
-    private Post post;
+    private ProjectPost projectPost;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member participant;
 
-    public static Plan from(PostRequest parameter, Member participant, Post post) {
+    public static Plan from(ProjectPostRequest parameter, Member participant, ProjectPost projectPost) {
         return Plan.builder()
-                .post(post)
+                .projectPost(projectPost)
                 .participant(participant)
                 .detail(parameter.getDetail())
                 .startedAt(parameter.getStartedAt())

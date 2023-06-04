@@ -6,11 +6,10 @@ import com.matching.member.domain.Member;
 import com.matching.participate.domain.Participate;
 import com.matching.photo.domain.Photo;
 import com.matching.plan.domain.Plan;
-import com.matching.post.dto.PostRequest;
-import com.matching.post.dto.PostUpdateRequest;
+import com.matching.post.dto.ProjectPostRequest;
+import com.matching.post.dto.ProjectPostUpdateRequest;
 import lombok.*;
 import org.hibernate.envers.AuditOverride;
-import org.springframework.data.jpa.repository.EntityGraph;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -23,11 +22,10 @@ import java.util.List;
 @NoArgsConstructor
 @AuditOverride(forClass = BaseEntity.class)
 @Entity
-@Table(name = "post")
-public class Post extends BaseEntity {
+@Table(name = "projectPost")
+public class ProjectPost extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "post_id")
     private Long id;
     private String title;
     private String content;
@@ -46,21 +44,21 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "user_id")
     private Member author;
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "projectPost", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Participate> participateList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "projectPost", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Photo> photoList = new ArrayList<>();
 
-    public void update(PostUpdateRequest request) {
+    public void update(ProjectPostUpdateRequest request) {
         this.title = request.getTitle();
         this.content = request.getContent();
     }
 
-    public static Post from(PostRequest parameter, Category category) {
-        return Post.builder()
+    public static ProjectPost from(ProjectPostRequest parameter, Category category) {
+        return ProjectPost.builder()
                 .title(parameter.getTitle())
                 .content(parameter.getContent())
                 .category(category)

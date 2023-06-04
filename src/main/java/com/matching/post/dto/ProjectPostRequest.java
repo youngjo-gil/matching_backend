@@ -1,7 +1,6 @@
 package com.matching.post.dto;
 
 import com.matching.member.domain.Member;
-import com.matching.post.domain.Category;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -11,7 +10,7 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostRequest {
+public class ProjectPostRequest {
     /**
      * 글쓰기
      */

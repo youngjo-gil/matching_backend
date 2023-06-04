@@ -16,14 +16,14 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Entity
 @AuditOverride(forClass = BaseEntity.class)
-public class PostLike extends BaseEntity {
+public class ProjectPostLike extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
     @JoinColumn(name = "post_id")
-    private Post post;
+    private ProjectPost projectPost;
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;

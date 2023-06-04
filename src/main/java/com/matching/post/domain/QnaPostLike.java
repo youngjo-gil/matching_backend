@@ -1,7 +1,6 @@
-package com.matching.chat.domain;
+package com.matching.post.domain;
 
 import com.matching.common.domain.BaseEntity;
-import com.matching.post.domain.ProjectPost;
 import com.matching.member.domain.Member;
 import lombok.*;
 import org.hibernate.envers.AuditOverride;
@@ -15,17 +14,23 @@ import javax.persistence.*;
 @Entity
 @Builder
 @AuditOverride(forClass = BaseEntity.class)
-public class ChatRoom extends BaseEntity {
+public class QnaPostLike extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id")
-    private ProjectPost projectPost;
+    @ManyToOne
+    @JoinColumn(name = "qna_post_id")
+    private QnaPost qnaPost;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
 
+    public static QnaPostLike from(Member member, QnaPost qnaPost) {
+         return QnaPostLike.builder()
+                 .qnaPost(qnaPost)
+                 .member(member)
+                 .build();
+    }
 }
