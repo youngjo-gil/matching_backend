@@ -33,6 +33,11 @@ public class QnaPost extends BaseEntity {
     @OneToMany(mappedBy = "qnaPost", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QnaHashtag> hashtags = new ArrayList<>();
 
+    public void update(QnaPostRequest request) {
+        this.title = request.getTitle();
+        this.body = request.getBody();
+    }
+
 
 
     public static QnaPost from(QnaPostRequest parameter) {
