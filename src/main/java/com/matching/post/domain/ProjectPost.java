@@ -26,7 +26,6 @@ import java.util.List;
 public class ProjectPost extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "post_id")
     private Long id;
     private String title;
     private String content;
@@ -45,11 +44,11 @@ public class ProjectPost extends BaseEntity {
     @JoinColumn(name = "user_id")
     private Member author;
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "projectPost", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Participate> participateList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "projectPost", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Photo> photoList = new ArrayList<>();
 

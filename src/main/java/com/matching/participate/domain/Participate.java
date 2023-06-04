@@ -22,7 +22,7 @@ public class Participate {
     private Member participate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id")
+    @JoinColumn(name = "project_post_id")
     private ProjectPost projectPost;
 
     @Enumerated(EnumType.STRING)

@@ -43,7 +43,7 @@ public class ParticipateServiceImpl implements ParticipateService {
             throw new IllegalArgumentException("참가자 상태 변경 권한이 없습니다.");
         }
 
-        Participate participate = participateRepository.findByParticipate_IdAndPost_Id(member.getId(), projectPost.getId())
+        Participate participate = participateRepository.findByParticipate_IdAndProjectPost_Id(member.getId(), projectPost.getId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 참가자를 조회할 수 없습니다."));
 
         participate.updateStatus(Participate.ParticipateStatus.ADMISSION);

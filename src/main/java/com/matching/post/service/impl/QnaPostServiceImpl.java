@@ -5,6 +5,7 @@ import com.matching.member.repository.MemberRepository;
 import com.matching.post.domain.QnaPost;
 import com.matching.post.domain.QnaPostLike;
 import com.matching.post.dto.QnaPostRequest;
+import com.matching.post.dto.QnaPostResponse;
 import com.matching.post.repository.QnaPostLikeRepository;
 import com.matching.post.repository.QnaPostRepository;
 import com.matching.post.service.QnaHashtagService;
@@ -36,6 +37,15 @@ public class QnaPostServiceImpl implements QnaPostService {
         qnaHashtagService.saveQnaHashtag(qnaPost, parameter.getHashtagList());
 
         return qnaPost.getId();
+    }
+
+    @Override
+    public QnaPostResponse getQna(Long qnaPostId) {
+        QnaPost qnaPost = qnaPostRepository.findById(qnaPostId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 포스트가 없습니다."));
+        Long likeCount = getLikeCount(qnaPost.getId());
+
+        return QnaPostResponse.from(qnaPost, likeCount);
     }
 
     @Transactional
@@ -83,10 +93,7 @@ public class QnaPostServiceImpl implements QnaPostService {
         }
     }
 
-    public int getLikeCount(Long qnaPostId) {
-        QnaPost qnaPost = qnaPostRepository.findById(qnaPostId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 포스트가 없습니다."));
-
-        return 0;
+    public Long getLikeCount(Long qnaPostId) {
+        return qnaPostRepository.getLikeCountByQnaPostId(qnaPostId);
     }
 }

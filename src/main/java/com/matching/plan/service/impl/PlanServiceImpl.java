@@ -19,7 +19,7 @@ public class PlanServiceImpl implements PlanService {
     public PlanResponse getPlanList(Long postId) {
         ProjectPost projectPost = projectPostRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
-        Plan plan = planRepository.findByPost_Id(postId)
+        Plan plan = planRepository.findByProjectPost_Id(postId)
                 .orElseThrow(() -> new IllegalArgumentException("목표 설정이 없습니다."));
 
         return PlanResponse.of(plan, projectPost);

@@ -18,7 +18,7 @@ import com.matching.post.dto.PostSearchRequest;
 import com.matching.post.dto.ProjectPostUpdateRequest;
 import com.matching.post.repository.CategoryRepository;
 import com.matching.post.repository.ProjectPostRepository;
-import com.matching.post.repository.PostRepositoryQuerydsl;
+//import com.matching.post.repository.PostRepositoryQuerydsl;
 import com.matching.post.service.ProjectPostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
@@ -39,7 +39,7 @@ public class ProjectPostServiceImpl implements ProjectPostService {
     private final ParticipateRepository participateRepository;
     private final CategoryRepository categoryRepository;
     private final PhotoRepository photoRepository;
-    private final PostRepositoryQuerydsl postRepositoryQuerydsl;
+//    private final PostRepositoryQuerydsl postRepositoryQuerydsl;
 
     private final PhotoService photoService;
 
@@ -80,7 +80,7 @@ public class ProjectPostServiceImpl implements ProjectPostService {
         ProjectPost projectPost = projectPostRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
 
-        List<Photo> photoList = photoRepository.findAllByPost_Id(projectPost.getId())
+        List<Photo> photoList = photoRepository.findAllByProjectPost_Id(projectPost.getId())
                 .orElse(null);
         List<String> test = photoList.stream().map(item -> item.getPathname())
                 .collect(Collectors.toList());
@@ -88,16 +88,16 @@ public class ProjectPostServiceImpl implements ProjectPostService {
         return ProjectPostResponse.from(projectPost, test);
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public Page<ProjectPostResponse> getPostSearchList(PostSearchRequest parameter) {
-        return ProjectPostResponse.fromEntitiesPage(
-                postRepositoryQuerydsl.findAll(
-                        PageRequest.of(parameter.getPageNum(), parameter.getPageSize()),
-                        parameter.getKeyword()
-                )
-        );
-    }
+//    @Override
+//    @Transactional(readOnly = true)
+//    public Page<ProjectPostResponse> getPostSearchList(PostSearchRequest parameter) {
+//        return ProjectPostResponse.fromEntitiesPage(
+//                postRepositoryQuerydsl.findAll(
+//                        PageRequest.of(parameter.getPageNum(), parameter.getPageSize()),
+//                        parameter.getKeyword()
+//                )
+//        );
+//    }
 
     // 참가중인 ProjectPost 조회ㅔ
     @Override
@@ -144,7 +144,7 @@ public class ProjectPostServiceImpl implements ProjectPostService {
         Member member = memberRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("회원 정보가 없습니다."));
 
-        Participate participate = participateRepository.findByParticipate_IdAndPost_Id(member.getId(), projectPost.getId())
+        Participate participate = participateRepository.findByParticipate_IdAndProjectPost_Id(member.getId(), projectPost.getId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 포스트 참가자가 아닙니다."));
 
         if(!participate.getStatus().equals(Participate.ParticipateStatus.LEADER)) {

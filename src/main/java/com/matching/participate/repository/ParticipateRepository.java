@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface ParticipateRepository extends JpaRepository<Participate, Long> {
-    Optional<Participate> findByParticipate_IdAndPost_Id(Long userId, Long postId);
+    Optional<Participate> findByParticipate_IdAndProjectPost_Id(Long userId, Long postId);
 }

@@ -3,6 +3,7 @@ package com.matching.post.controller;
 import com.matching.common.dto.ResponseDto;
 import com.matching.common.utils.ResponseUtil;
 import com.matching.post.dto.QnaPostRequest;
+import com.matching.post.dto.QnaPostResponse;
 import com.matching.post.service.QnaPostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -26,6 +27,15 @@ public class QnaPostController {
         Long qnaPostId = qnaPostService.writeQna(parameter, memberId);
 
         return ResponseUtil.SUCCESS("글쓰기 성공", qnaPostId);
+    }
+
+    @GetMapping("/{qnaPostId}")
+    public ResponseDto getQnaPost(
+            @PathVariable Long qnaPostId
+    ) {
+        QnaPostResponse response = qnaPostService.getQna(qnaPostId);
+
+        return ResponseUtil.SUCCESS("게시글 조회 성공", response);
     }
 
     @PatchMapping("/{qnaPostId}")

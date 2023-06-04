@@ -66,12 +66,12 @@ public class ProjectPostController {
     }
 
 
-    @GetMapping("/search")
-    public ResponseDto getPostSearchList(
-            @RequestBody @Valid PostSearchRequest parameter
-    ) {
-        return ResponseUtil.SUCCESS("조회성공", projectPostService.getPostSearchList(parameter));
-    }
+//    @GetMapping("/search")
+//    public ResponseDto getPostSearchList(
+//            @RequestBody @Valid PostSearchRequest parameter
+//    ) {
+//        return ResponseUtil.SUCCESS("조회성공", projectPostService.getPostSearchList(parameter));
+//    }
 
     // 참가 중인 projectPost 조회
     @GetMapping("/myPage/participant")

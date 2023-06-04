@@ -16,7 +16,7 @@ public interface ProjectPostService {
     Long updatePost(Long postId, Long userId, ProjectPostUpdateRequest parameter);
     void deletePost(Long postId, Long userId);
     Page<ProjectPostResponse> getPostByCategoryDesc(Long categoryId);
-    Page<ProjectPostResponse> getPostSearchList(PostSearchRequest parameter);
+//    Page<ProjectPostResponse> getPostSearchList(PostSearchRequest parameter);
 
     // 참가 중인 projectPost 조회
     Page<ProjectPostResponse> getPostByParticipant(Long memberId);

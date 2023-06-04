@@ -24,8 +24,7 @@ public class QnaPost extends BaseEntity {
     private Long id;
     private String title;
     private String body;
-
-    private int likeCount;
+    private Long likeCount;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
