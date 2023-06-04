@@ -40,4 +40,27 @@ public class QnaPostController {
 
         return ResponseUtil.SUCCESS("업데이스 성공", qnaPost);
     }
+
+    @DeleteMapping("/{qnaPostId}")
+    public ResponseDto deletePost(
+            @PathVariable Long qnaPostId,
+            @AuthenticationPrincipal User user
+    ) {
+        Long memberId = Long.parseLong(user.getUsername());
+
+        qnaPostService.deleteQna(memberId, qnaPostId);
+
+        return ResponseUtil.SUCCESS("게시글 삭제 성공", true);
+    }
+
+    @PostMapping("/like/{qnaPostId}")
+    public ResponseDto qnaPostLike(
+            @PathVariable Long qnaPostId,
+            @AuthenticationPrincipal User user
+    ) {
+        Long memberId = Long.parseLong(user.getUsername());
+        qnaPostService.toggleLike(memberId, qnaPostId);
+
+        return ResponseUtil.SUCCESS("좋아요 성공", true);
+    }
 }

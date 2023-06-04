@@ -25,6 +25,8 @@ public class QnaPost extends BaseEntity {
     private String title;
     private String body;
 
+    private int likeCount;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -32,6 +34,9 @@ public class QnaPost extends BaseEntity {
 
     @OneToMany(mappedBy = "qnaPost", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QnaHashtag> hashtags = new ArrayList<>();
+    @OneToMany(mappedBy = "qnaPost", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<QnaPostLike> qnaPostLikes = new ArrayList<>();
+
 
     public void update(QnaPostRequest request) {
         this.title = request.getTitle();
