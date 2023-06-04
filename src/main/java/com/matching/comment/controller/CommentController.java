@@ -28,4 +28,27 @@ public class CommentController {
 
         return ResponseUtil.SUCCESS("댓글 생성 성공", qnaComment);
     }
+
+    @PatchMapping("/{commentId}")
+    public ResponseDto updateComment(
+            @RequestBody CommentRequest parameter,
+            @PathVariable Long commentId,
+            @AuthenticationPrincipal User user
+    ) {
+        Long memberId = Long.parseLong(user.getUsername());
+        QnaComment qnaComment = commentService.updateQnaComment(parameter, commentId, memberId);
+
+        return ResponseUtil.SUCCESS("댓글 수정 성공", qnaComment);
+    }
+
+    @DeleteMapping("/{commentId}")
+    public ResponseDto deleteComment(
+            @PathVariable Long commentId,
+            @AuthenticationPrincipal User user
+    ) {
+        Long memberId = Long.parseLong(user.getUsername());
+        commentService.removeQnaComment(commentId, memberId);
+
+        return ResponseUtil.SUCCESS("댓글 삭제 성공", true);
+    }
 }

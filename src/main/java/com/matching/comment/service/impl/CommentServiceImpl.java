@@ -30,4 +30,22 @@ public class CommentServiceImpl implements CommentService {
 
         return qnaCommentRepository.save(qnaComment);
     }
+
+    @Override
+    public QnaComment updateQnaComment(CommentRequest parameter, Long commentId, Long memberId) {
+        QnaComment qnaComment = qnaCommentRepository.findByIdAndAuthor_Id(commentId, memberId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 댓글이 없습니다."));
+
+        qnaComment.setContent(parameter.getContent());
+
+        return qnaComment;
+    }
+
+    @Override
+    public void removeQnaComment(Long commentId, Long memberId) {
+        QnaComment qnaComment = qnaCommentRepository.findByIdAndAuthor_Id(commentId, memberId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 댓글이 없습니다."));
+
+        qnaCommentRepository.delete(qnaComment);
+    }
 }
