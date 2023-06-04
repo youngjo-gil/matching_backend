@@ -12,7 +12,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 
-import static com.matching.post.domain.QPost.post;
+import static com.matching.post.domain.QProjectPost.projectPost;
 
 @Repository
 @RequiredArgsConstructor
@@ -28,18 +28,18 @@ public class PostRepositoryQuerydslImpl implements PostRepositoryQuerydsl {
 
     private List<ProjectPost> searchPost(String keyword, Pageable pageable) {
         return jpaQueryFactory
-                .selectFrom(post)
+                .selectFrom(projectPost)
                 .where(
                         eqTitle(keyword)
                 )
-                .orderBy(post.createdAt.desc())
+                .orderBy(projectPost.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
     }
 
     private BooleanExpression eqTitle(String keyword) {
-        return !StringUtils.hasText(keyword) ? null : post.title.contains(keyword);
+        return !StringUtils.hasText(keyword) ? null : projectPost.title.contains(keyword);
     }
 
 }
