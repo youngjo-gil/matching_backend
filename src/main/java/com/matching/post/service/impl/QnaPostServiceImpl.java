@@ -1,5 +1,7 @@
 package com.matching.post.service.impl;
 
+import com.matching.comment.domain.QnaComment;
+import com.matching.comment.repository.QnaCommentRepository;
 import com.matching.member.domain.Member;
 import com.matching.member.repository.MemberRepository;
 import com.matching.post.domain.QnaPost;
@@ -14,6 +16,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,6 +28,7 @@ public class QnaPostServiceImpl implements QnaPostService {
     private final QnaPostRepository qnaPostRepository;
     private final QnaHashtagService qnaHashtagService;
     private final QnaPostLikeRepository qnaPostLikeRepository;
+    private final QnaCommentRepository qnaCommentRepository;
 
     @Transactional
     @Override
@@ -44,8 +50,15 @@ public class QnaPostServiceImpl implements QnaPostService {
         QnaPost qnaPost = qnaPostRepository.findById(qnaPostId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 포스트가 없습니다."));
         Long likeCount = getLikeCount(qnaPost.getId());
+        List<QnaComment> qnaCommentList = new ArrayList<>();
 
-        return QnaPostResponse.from(qnaPost, likeCount);
+        Optional<List<QnaComment>> optionalQnaComments = qnaCommentRepository.findAllByQnaPost_Id(qnaPost.getId());
+
+        if(optionalQnaComments.isPresent()) {
+            qnaCommentList = optionalQnaComments.get();
+        }
+
+        return QnaPostResponse.from(qnaPost, likeCount, qnaCommentList);
     }
 
     @Transactional
@@ -68,7 +81,6 @@ public class QnaPostServiceImpl implements QnaPostService {
     public void deleteQna(Long memberId, Long qnaPostId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 회원이 없습니다."));
-
         QnaPost qnaPost = qnaPostRepository.findByIdAndAuthor_Id(qnaPostId, member.getId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 포스트가 없습니다."));
 
