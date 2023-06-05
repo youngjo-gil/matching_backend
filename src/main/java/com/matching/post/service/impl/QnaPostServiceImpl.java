@@ -8,6 +8,7 @@ import com.matching.member.domain.Member;
 import com.matching.member.repository.MemberRepository;
 import com.matching.post.domain.QnaPost;
 import com.matching.post.domain.QnaPostLike;
+import com.matching.post.dto.ProjectPostResponse;
 import com.matching.post.dto.QnaPostRequest;
 import com.matching.post.dto.QnaPostResponse;
 import com.matching.post.repository.QnaPostLikeRepository;
@@ -17,6 +18,9 @@ import com.matching.post.service.QnaPostService;
 import com.matching.scrap.domain.QnaPostScrap;
 import com.matching.scrap.repostory.QnaPostScrapRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -126,6 +130,23 @@ public class QnaPostServiceImpl implements QnaPostService {
             QnaPostScrap qnaPostScrap = QnaPostScrap.from(member, qnaPost);
             qnaPostScrapRepository.save(qnaPostScrap);
         }
+    }
+
+    @Override
+    public Page<QnaPostResponse> getPostByScrap(Long memberId) {
+        int pageNumber = 0; // 가져올 페이지 번호 (0부터 시작)
+        int pageSize = 10; // 페이지당 결과 수
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        Page<QnaPost> qnaPostPage = qnaPostRepository.findAllQnaPostByScrapMemberId(member.getId(), pageable);
+
+        return qnaPostPage.map(post -> {
+            Long likeCount = getLikeCount(post.getId());
+            return QnaPostResponse.from(post, likeCount);
+        });
     }
 
     public Long getLikeCount(Long qnaPostId) {

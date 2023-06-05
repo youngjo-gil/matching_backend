@@ -3,6 +3,7 @@ package com.matching.post.domain;
 import com.matching.common.domain.BaseEntity;
 import com.matching.member.domain.Member;
 import com.matching.post.dto.QnaPostRequest;
+import com.matching.scrap.domain.QnaPostScrap;
 import lombok.*;
 import org.hibernate.envers.AuditOverride;
 
@@ -30,10 +31,13 @@ public class QnaPost extends BaseEntity {
     @JoinColumn(name = "user_id")
     private Member author;
 
-    @OneToMany(mappedBy = "qnaPost", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "qnaPost", orphanRemoval = true)
     private List<QnaHashtag> hashtags = new ArrayList<>();
-    @OneToMany(mappedBy = "qnaPost", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "qnaPost", orphanRemoval = true)
     private List<QnaPostLike> qnaPostLikes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "qnaPost", orphanRemoval = true)
+    private List<QnaPostScrap> qnaPostScrapList = new ArrayList<>();
 
 
     public void update(QnaPostRequest request) {

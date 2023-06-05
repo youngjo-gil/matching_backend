@@ -6,6 +6,7 @@ import com.matching.post.dto.QnaPostRequest;
 import com.matching.post.dto.QnaPostResponse;
 import com.matching.post.service.QnaPostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
@@ -83,5 +84,17 @@ public class QnaPostController {
         qnaPostService.toggleScrap(memberId, qnaPostId);
 
         return ResponseUtil.SUCCESS("스크랩 성공", true);
+    }
+
+
+    // 해당 유저 스크랩한 Qna 게시글
+    @GetMapping("/myPage/scrap")
+    public ResponseDto getPostByScrap(
+            @AuthenticationPrincipal User user
+    ) {
+        Long memberId = Long.parseLong(user.getUsername());
+        Page<QnaPostResponse> qnaPostResponses = qnaPostService.getPostByScrap(memberId);
+
+        return ResponseUtil.SUCCESS("조회 성공", qnaPostResponses);
     }
 }

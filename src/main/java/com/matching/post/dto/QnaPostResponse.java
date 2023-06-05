@@ -19,6 +19,13 @@ public class QnaPostResponse {
     private List<QnaComment> qnaCommentList;
     private LocalDateTime createdAt;
 
+    public static QnaPostResponse from(QnaPost qnaPost, Long likeCount) {
+        return QnaPostResponse.builder()
+                .title(qnaPost.getTitle())
+                .body(qnaPost.getBody())
+                .likeCount(likeCount)
+                .build();
+    }
     public static QnaPostResponse from(QnaPost qnaPost, Long likeCount, List<QnaComment> qnaCommentList) {
         return QnaPostResponse.builder()
                 .title(qnaPost.getTitle())

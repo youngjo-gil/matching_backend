@@ -161,7 +161,6 @@ public class ProjectPostServiceImpl implements ProjectPostService {
         int pageNumber = 0; // 가져올 페이지 번호 (0부터 시작)
         int pageSize = 10; // 페이지당 결과 수
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        List<ProjectPostResponse> responses = new ArrayList<>();
 
         Page<ProjectPost> postPage = projectPostRepository.findAllOrderByParticipantByPhotoCountByCategoryDesc(categoryId, pageable);
 
