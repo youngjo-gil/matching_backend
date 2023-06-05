@@ -2,6 +2,8 @@ package com.matching.post.service.impl;
 
 import com.matching.comment.domain.QnaComment;
 import com.matching.comment.repository.QnaCommentRepository;
+import com.matching.exception.dto.ErrorCode;
+import com.matching.exception.util.CustomException;
 import com.matching.member.domain.Member;
 import com.matching.member.repository.MemberRepository;
 import com.matching.post.domain.QnaPost;
@@ -34,7 +36,7 @@ public class QnaPostServiceImpl implements QnaPostService {
     @Override
     public Long writeQna(QnaPostRequest parameter, Long memberId) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 회원이 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         parameter.setMember(member);
 
@@ -48,7 +50,7 @@ public class QnaPostServiceImpl implements QnaPostService {
     @Override
     public QnaPostResponse getQna(Long qnaPostId) {
         QnaPost qnaPost = qnaPostRepository.findById(qnaPostId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 포스트가 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
         Long likeCount = getLikeCount(qnaPost.getId());
         List<QnaComment> qnaCommentList = new ArrayList<>();
 
@@ -65,10 +67,10 @@ public class QnaPostServiceImpl implements QnaPostService {
     @Override
     public Long updateQna(QnaPostRequest parameter, Long memberId, Long qnaPostId) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 회원이 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         QnaPost qnaPost = qnaPostRepository.findByIdAndAuthor_Id(qnaPostId, member.getId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 포스트가 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
         qnaPost.getHashtags().clear();
 
@@ -80,9 +82,9 @@ public class QnaPostServiceImpl implements QnaPostService {
     @Override
     public void deleteQna(Long memberId, Long qnaPostId) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 회원이 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         QnaPost qnaPost = qnaPostRepository.findByIdAndAuthor_Id(qnaPostId, member.getId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 포스트가 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
         qnaPostRepository.delete(qnaPost);
     }
@@ -92,9 +94,9 @@ public class QnaPostServiceImpl implements QnaPostService {
         Optional<QnaPostLike> qnaPostLikeOptional = qnaPostLikeRepository.findByMember_IdAndQnaPost_Id(memberId, qnaPostId);
 
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 회원이 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         QnaPost qnaPost = qnaPostRepository.findById(qnaPostId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
         if(qnaPostLikeOptional.isPresent()){
             // 좋아요가 있는경우 취소처리

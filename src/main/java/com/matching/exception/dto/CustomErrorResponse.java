@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 
 @Getter
 @Setter
-@RequiredArgsConstructor
 @Builder
 public class CustomErrorResponse {
     private final HttpStatus status;

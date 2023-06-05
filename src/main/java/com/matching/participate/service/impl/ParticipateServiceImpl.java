@@ -1,5 +1,7 @@
 package com.matching.participate.service.impl;
 
+import com.matching.exception.dto.ErrorCode;
+import com.matching.exception.util.CustomException;
 import com.matching.member.domain.Member;
 import com.matching.member.repository.MemberRepository;
 import com.matching.participate.domain.Participate;
@@ -23,9 +25,9 @@ public class ParticipateServiceImpl implements ParticipateService {
     @Override
     public Long insertParticipate(Long id, Long postId) {
         Member member = memberRepository.findById(id)
-                        .orElseThrow(() -> new IllegalArgumentException("해당 회원이 없습니다."));
+                        .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         ProjectPost projectPost = projectPostRepository.findById(postId)
-                        .orElseThrow(() -> new IllegalArgumentException("해당 포스트가 없습니다."));
+                        .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
         return participateRepository.save(Participate.from(member, projectPost)).getId();
     }
@@ -34,17 +36,17 @@ public class ParticipateServiceImpl implements ParticipateService {
     @Override
     public Long updateParticipateStatus(Long id, Long postId, ParticipateStatusRequest parameter) {
         ProjectPost projectPost = projectPostRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 포스트가 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
         Member member = memberRepository.findByEmail(parameter.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         if(!projectPost.getAuthor().getId().equals(id)) {
-            throw new IllegalArgumentException("참가자 상태 변경 권한이 없습니다.");
+            throw new CustomException(ErrorCode.PARTICIPATE_NOT_LEADER);
         }
 
         Participate participate = participateRepository.findByParticipate_IdAndProjectPost_Id(member.getId(), projectPost.getId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 참가자를 조회할 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.PARTICIPATE_NOT_FOUND));
 
         participate.updateStatus(Participate.ParticipateStatus.ADMISSION);
         participateRepository.save(participate);
