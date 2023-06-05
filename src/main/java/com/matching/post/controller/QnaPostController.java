@@ -88,12 +88,12 @@ public class QnaPostController {
 
 
     // 해당 유저 스크랩한 Qna 게시글
-    @GetMapping("/myPage/scrap")
+    @GetMapping("/myPage/scrap/{pageNum}")
     public ResponseDto getPostByScrap(
-            @AuthenticationPrincipal User user
-    ) {
+            @AuthenticationPrincipal User user,
+            @PathVariable int pageNum) {
         Long memberId = Long.parseLong(user.getUsername());
-        Page<QnaPostResponse> qnaPostResponses = qnaPostService.getPostByScrap(memberId);
+        Page<QnaPostResponse> qnaPostResponses = qnaPostService.getPostByScrap(memberId, pageNum);
 
         return ResponseUtil.SUCCESS("조회 성공", qnaPostResponses);
     }

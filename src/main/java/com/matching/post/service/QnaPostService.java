@@ -15,5 +15,5 @@ public interface QnaPostService {
     void toggleScrap(Long memberId, Long qnaPostId);
 
     // 스크랩 게시글 조회
-    Page<QnaPostResponse> getPostByScrap(Long memberId);
+    Page<QnaPostResponse> getPostByScrap(Long memberId, int pageNum);
 }

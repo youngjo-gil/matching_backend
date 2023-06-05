@@ -38,6 +38,8 @@ public class QnaPostServiceImpl implements QnaPostService {
     private final QnaCommentRepository qnaCommentRepository;
     private final QnaPostScrapRepository qnaPostScrapRepository;
 
+    private final static int PAGE_SIZE = 10;
+
     @Transactional
     @Override
     public Long writeQna(QnaPostRequest parameter, Long memberId) {
@@ -53,6 +55,7 @@ public class QnaPostServiceImpl implements QnaPostService {
         return qnaPost.getId();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public QnaPostResponse getQna(Long qnaPostId) {
         QnaPost qnaPost = qnaPostRepository.findById(qnaPostId)
@@ -85,6 +88,7 @@ public class QnaPostServiceImpl implements QnaPostService {
         return qnaPost.getId();
     }
 
+    @Transactional
     @Override
     public void deleteQna(Long memberId, Long qnaPostId) {
         Member member = memberRepository.findById(memberId)
@@ -133,10 +137,9 @@ public class QnaPostServiceImpl implements QnaPostService {
     }
 
     @Override
-    public Page<QnaPostResponse> getPostByScrap(Long memberId) {
-        int pageNumber = 0; // 가져올 페이지 번호 (0부터 시작)
-        int pageSize = 10; // 페이지당 결과 수
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+    @Transactional(readOnly = true)
+    public Page<QnaPostResponse> getPostByScrap(Long memberId, int pageNum) {
+        Pageable pageable = PageRequest.of(pageNum, PAGE_SIZE);
 
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
