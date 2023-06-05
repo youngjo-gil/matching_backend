@@ -10,4 +10,6 @@ public interface QnaPostService {
     Long updateQna(QnaPostRequest parameter, Long memberId, Long qnaPostId);
     void deleteQna(Long memberId, Long qnaPostId);
     void toggleLike(Long memberId, Long qnaPostId);
+
+    void toggleScrap(Long memberId, Long qnaPostId);
 }

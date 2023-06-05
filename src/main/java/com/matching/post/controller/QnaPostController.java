@@ -64,7 +64,7 @@ public class QnaPostController {
     }
 
     @PostMapping("/like/{qnaPostId}")
-    public ResponseDto qnaPostLike(
+    public ResponseDto toggleQnaPostLike(
             @PathVariable Long qnaPostId,
             @AuthenticationPrincipal User user
     ) {
@@ -72,5 +72,16 @@ public class QnaPostController {
         qnaPostService.toggleLike(memberId, qnaPostId);
 
         return ResponseUtil.SUCCESS("좋아요 성공", true);
+    }
+
+    @PostMapping("/scrap/{qnaPostId}")
+    public ResponseDto toggleQnaPostScrap(
+            @PathVariable Long qnaPostId,
+            @AuthenticationPrincipal User user
+    ) {
+        Long memberId = Long.parseLong(user.getUsername());
+        qnaPostService.toggleScrap(memberId, qnaPostId);
+
+        return ResponseUtil.SUCCESS("스크랩 성공", true);
     }
 }

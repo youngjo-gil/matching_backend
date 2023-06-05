@@ -14,11 +14,12 @@ import com.matching.post.repository.QnaPostLikeRepository;
 import com.matching.post.repository.QnaPostRepository;
 import com.matching.post.service.QnaHashtagService;
 import com.matching.post.service.QnaPostService;
+import com.matching.scrap.domain.QnaPostScrap;
+import com.matching.scrap.repostory.QnaPostScrapRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +32,7 @@ public class QnaPostServiceImpl implements QnaPostService {
     private final QnaHashtagService qnaHashtagService;
     private final QnaPostLikeRepository qnaPostLikeRepository;
     private final QnaCommentRepository qnaCommentRepository;
+    private final QnaPostScrapRepository qnaPostScrapRepository;
 
     @Transactional
     @Override
@@ -89,6 +91,7 @@ public class QnaPostServiceImpl implements QnaPostService {
         qnaPostRepository.delete(qnaPost);
     }
 
+    @Transactional
     @Override
     public void toggleLike(Long memberId, Long qnaPostId) {
         Optional<QnaPostLike> qnaPostLikeOptional = qnaPostLikeRepository.findByMember_IdAndQnaPost_Id(memberId, qnaPostId);
@@ -104,6 +107,24 @@ public class QnaPostServiceImpl implements QnaPostService {
         } else {
             QnaPostLike qnaPostLike = QnaPostLike.from(member, qnaPost);
             qnaPostLikeRepository.save(qnaPostLike);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void toggleScrap(Long memberId, Long qnaPostId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        QnaPost qnaPost = qnaPostRepository.findById(qnaPostId)
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
+
+        Optional<QnaPostScrap> qnaPostScrapOptional = qnaPostScrapRepository.findByQnaPost_IdAndMember_Id(qnaPost.getId(), member.getId());
+
+        if(qnaPostScrapOptional.isPresent()) {
+            qnaPostScrapRepository.delete(qnaPostScrapOptional.get());
+        } else {
+            QnaPostScrap qnaPostScrap = QnaPostScrap.from(member, qnaPost);
+            qnaPostScrapRepository.save(qnaPostScrap);
         }
     }
 
