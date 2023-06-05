@@ -7,11 +7,13 @@ import org.springframework.http.ResponseEntity;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class CustomErrorResponse {
-    private final HttpStatus status;
-    private final String code;
-    private final String message;
+    private HttpStatus status;
+    private String code;
+    private String message;
 
     public CustomErrorResponse(ErrorCode errorCode) {
         this.status = errorCode.getStatus();
@@ -19,14 +21,14 @@ public class CustomErrorResponse {
         this.message = errorCode.getMessage();
     }
 
-    public static ResponseEntity<CustomErrorResponse> error(CustomException e) {
-        return ResponseEntity
-                .status(e.getErrorCode().getStatus())
-                .body(CustomErrorResponse.builder()
-                    .status(e.getErrorCode().getStatus())
-                    .code(e.getErrorCode().name())
-                    .message(e.getErrorCode().getMessage())
-                    .build());
-    }
+//    public static ResponseEntity<CustomErrorResponse> toEntity(ErrorCode e) {
+//        return ResponseEntity
+//                .status(e.getStatus())
+//                .body(CustomErrorResponse.builder()
+//                    .status(e.getStatus())
+//                    .code(e.name())
+//                    .message(e.getMessage())
+//                    .build());
+//    }
 
 }
