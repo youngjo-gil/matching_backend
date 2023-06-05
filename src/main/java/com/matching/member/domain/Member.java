@@ -47,8 +47,6 @@ public class Member extends BaseEntity implements UserDetails {
         this.profileImageUrl = (parameter.getProfileImageUrl() == null) ? this.getProfileImageUrl() : parameter.getProfileImageUrl();
         this.organization = (parameter.getOrganization() == null) ? this.getOrganization() : parameter.getOrganization();
         this.job = (parameter.getJob() == null) ? this.getJob() : parameter.getJob();
-
-
     }
 
     public static Member from(SignUpRequest parameter) {

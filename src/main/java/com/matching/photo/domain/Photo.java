@@ -1,7 +1,9 @@
 package com.matching.photo.domain;
 
+import com.matching.common.domain.BaseEntity;
 import com.matching.post.domain.ProjectPost;
 import lombok.*;
+import org.hibernate.envers.AuditOverride;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -12,7 +14,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Photo {
+@AuditOverride(forClass = BaseEntity.class)
+public class Photo extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
