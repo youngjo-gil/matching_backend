@@ -46,9 +46,7 @@ public class QnaPostServiceImpl implements QnaPostService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        parameter.setMember(member);
-
-        QnaPost qnaPost = qnaPostRepository.save(QnaPost.from(parameter));
+        QnaPost qnaPost = qnaPostRepository.save(QnaPost.from(parameter, member));
 
         qnaHashtagService.saveQnaHashtag(qnaPost, parameter.getHashtagList());
 
@@ -83,6 +81,9 @@ public class QnaPostServiceImpl implements QnaPostService {
 
         qnaPost.getHashtags().clear();
 
+        qnaPost.setTitle(parameter.getTitle());
+        qnaPost.setBody(parameter.getBody());
+
         qnaHashtagService.saveQnaHashtag(qnaPost, parameter.getHashtagList());
 
         return qnaPost.getId();
@@ -90,13 +91,15 @@ public class QnaPostServiceImpl implements QnaPostService {
 
     @Transactional
     @Override
-    public void deleteQna(Long memberId, Long qnaPostId) {
+    public Long deleteQna(Long memberId, Long qnaPostId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         QnaPost qnaPost = qnaPostRepository.findByIdAndAuthor_Id(qnaPostId, member.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
         qnaPostRepository.delete(qnaPost);
+
+        return qnaPostId;
     }
 
     @Transactional

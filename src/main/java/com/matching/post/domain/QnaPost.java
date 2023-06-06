@@ -46,11 +46,11 @@ public class QnaPost extends BaseEntity {
     }
 
 
-    public static QnaPost from(QnaPostRequest parameter) {
+    public static QnaPost from(QnaPostRequest parameter, Member member) {
         return QnaPost.builder()
                 .title(parameter.getTitle())
                 .body(parameter.getBody())
-                .author(parameter.getMember())
+                .author(member)
                 .build();
     }
 }

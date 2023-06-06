@@ -36,8 +36,8 @@ public class Member extends BaseEntity implements UserDetails {
     private String profileImageUrl;
     @Enumerated(EnumType.STRING)
     private MemberStatus status;
-    @ElementCollection(fetch = FetchType.EAGER)
-    private List<String> roles = new ArrayList<>();
+    @Enumerated(EnumType.STRING)
+    private MemberRole role;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberSkill> memberSkills = new ArrayList<>();
@@ -49,6 +49,12 @@ public class Member extends BaseEntity implements UserDetails {
         this.job = (parameter.getJob() == null) ? this.getJob() : parameter.getJob();
     }
 
+    public List<String> getRoles(MemberRole role) {
+        List<String> roles = new ArrayList<>();
+        roles.add(role.getRole());
+        return roles;
+    }
+
     public static Member from(SignUpRequest parameter) {
         return Member.builder()
                 .email(parameter.getEmail())
@@ -56,11 +62,14 @@ public class Member extends BaseEntity implements UserDetails {
                 .name(parameter.getName())
                 .profileImageUrl(parameter.getProfileImageUrl())
                 .status(MemberStatus.REGISTERED)
+                .role(MemberRole.USER)
                 .build();
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<String> roles = new ArrayList<>();
+        roles.add(this.role.getRole());
         return roles.stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());

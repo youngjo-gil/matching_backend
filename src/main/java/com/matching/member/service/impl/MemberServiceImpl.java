@@ -86,8 +86,8 @@ public class MemberServiceImpl implements MemberService {
             throw new CustomException(ErrorCode.PASSWORD_NOT_MATCH);
         }
 
-        String accessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getRoles());
-        String refreshToken = jwtTokenProvider.createRefreshToken(member.getId(), member.getRoles());
+        String accessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getRoles(member.getRole()));
+        String refreshToken = jwtTokenProvider.createRefreshToken(member.getId(), member.getRoles(member.getRole()));
 
         refreshTokenRepository.save(
                 RefreshToken.builder()
@@ -111,8 +111,8 @@ public class MemberServiceImpl implements MemberService {
                 Member member = memberRepository.findById(id)
                         .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-                String newAccessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getRoles());
-                String newRefreshToken = jwtTokenProvider.createRefreshToken(member.getId(), member.getRoles());
+                String newAccessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getRoles(member.getRole()));
+                String newRefreshToken = jwtTokenProvider.createRefreshToken(member.getId(), member.getRoles(member.getRole()));
 
                 refreshTokenRepository.save(
                         RefreshToken.builder()
@@ -143,7 +143,7 @@ public class MemberServiceImpl implements MemberService {
 
         member.getMemberSkills().clear();
 
-        String accessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getRoles());
+        String accessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getRoles(member.getRole()));
 
         if(multipartFile != null) {
             List<String> uploadFile = awsS3Service.upload(multipartFile);

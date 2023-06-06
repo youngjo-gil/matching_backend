@@ -13,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class QnaPostResponse {
+    private Long id;
     private String title;
     private String body;
     private Long likeCount;
@@ -21,6 +22,7 @@ public class QnaPostResponse {
 
     public static QnaPostResponse from(QnaPost qnaPost, Long likeCount) {
         return QnaPostResponse.builder()
+                .id(qnaPost.getId())
                 .title(qnaPost.getTitle())
                 .body(qnaPost.getBody())
                 .likeCount(likeCount)
@@ -28,6 +30,7 @@ public class QnaPostResponse {
     }
     public static QnaPostResponse from(QnaPost qnaPost, Long likeCount, List<QnaComment> qnaCommentList) {
         return QnaPostResponse.builder()
+                .id(qnaPost.getId())
                 .title(qnaPost.getTitle())
                 .body(qnaPost.getBody())
                 .qnaCommentList(qnaCommentList)
