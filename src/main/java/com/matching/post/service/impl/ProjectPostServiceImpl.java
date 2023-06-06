@@ -14,10 +14,12 @@ import com.matching.plan.dto.PlanRequest;
 import com.matching.plan.repository.PlanRepository;
 import com.matching.post.domain.Category;
 import com.matching.post.domain.ProjectPost;
+import com.matching.post.domain.ProjectPostLike;
 import com.matching.post.dto.ProjectPostRequest;
 import com.matching.post.dto.ProjectPostResponse;
 import com.matching.post.dto.ProjectPostUpdateRequest;
 import com.matching.post.repository.CategoryRepository;
+import com.matching.post.repository.ProjectPostLikeRepository;
 import com.matching.post.repository.ProjectPostRepository;
 import com.matching.post.service.ProjectPostService;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,6 +45,7 @@ public class ProjectPostServiceImpl implements ProjectPostService {
     private final ParticipateRepository participateRepository;
     private final CategoryRepository categoryRepository;
     private final PhotoRepository photoRepository;
+    private final ProjectPostLikeRepository projectPostLikeRepository;
 //    private final PostRepositoryQuerydsl postRepositoryQuerydsl;
 
     private final PhotoService photoService;
@@ -170,6 +174,22 @@ public class ProjectPostServiceImpl implements ProjectPostService {
                     .collect(Collectors.toList());
             return ProjectPostResponse.from(post, photoList);
         });
+    }
+
+    @Override
+    public void toggleLike(Long memberId, Long projectPostId) {
+        Optional<ProjectPostLike> projectPostLikeOptional = projectPostLikeRepository.findByMember_IdAndProjectPost_Id(memberId, projectPostId);
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        ProjectPost projectPost = projectPostRepository.findById(projectPostId).orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
+
+        if(projectPostLikeOptional.isPresent()) {
+            projectPostLikeRepository.delete(projectPostLikeOptional.get());
+        } else {
+            ProjectPostLike projectPostLike = ProjectPostLike.from(member, projectPost);
+            projectPostLikeRepository.save(projectPostLike);
+        }
     }
 
     @Transactional

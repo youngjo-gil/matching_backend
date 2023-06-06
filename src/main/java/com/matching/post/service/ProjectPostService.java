@@ -22,6 +22,9 @@ public interface ProjectPostService {
     Page<ProjectPostResponse> getPostByParticipant(Long memberId);
     // 작성한 글 조회
     Page<ProjectPostResponse> getPostByWrite(Long memberId);
+
+    void toggleLike(Long memberId, Long projectPostId);
+
     Long participate(PlanRequest parameter, String email, Long postId);
     void completePlan(String email, Long planId);
 }
