@@ -18,7 +18,8 @@ public class Plan {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String detail;
+    @Column(name = "body")
+    private String planBody;
     private boolean completed;
 
     private LocalDate startedAt;
@@ -36,7 +37,7 @@ public class Plan {
         return Plan.builder()
                 .projectPost(projectPost)
                 .participant(participant)
-                .detail(parameter.getDetail())
+                .planBody(parameter.getPlanBody())
                 .startedAt(parameter.getStartedAt())
                 .endedAt(parameter.getEndedAt())
                 .completed(false)

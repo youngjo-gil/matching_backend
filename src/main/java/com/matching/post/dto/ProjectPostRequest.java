@@ -15,14 +15,13 @@ public class ProjectPostRequest {
      * 글쓰기
      */
     private String title;
-    private String content;
+    private String body;
+    private String summary;
     private Member member;
     private Long categoryId;
 
-    /**
-     * 목표
-     */
-    private String detail;
+
+    private String planBody;
     private LocalDate startedAt;
     private LocalDate endedAt;
 

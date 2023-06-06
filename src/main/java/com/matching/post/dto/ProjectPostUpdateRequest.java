@@ -9,5 +9,6 @@ import lombok.*;
 @AllArgsConstructor
 public class ProjectPostUpdateRequest {
     private String title;
-    private String content;
+    private String body;
+    private String summary;
 }

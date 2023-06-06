@@ -19,7 +19,8 @@ import java.util.stream.Collectors;
 public class ProjectPostResponse {
     private Long id;
     private String title;
-    private String content;
+    private String body;
+
     private String categoryName;
     private String plan;
     private String author;
@@ -33,9 +34,9 @@ public class ProjectPostResponse {
         return ProjectPostResponse.builder()
                 .id(projectPost.getId())
                 .title(projectPost.getTitle())
-                .content(projectPost.getContent())
+                .body(projectPost.getBody())
                 .categoryName(projectPost.getCategory().getCategoryName())
-                .plan(projectPost.getPlan().getDetail())
+                .plan(projectPost.getPlan().getPlanBody())
                 .createdAt(projectPost.getCreatedAt())
                 .startedAt(projectPost.getPlan().getStartedAt())
                 .endedAt(projectPost.getPlan().getEndedAt())
