@@ -3,6 +3,8 @@ package com.matching.member.service.impl;
 import com.matching.MatchingApplication;
 import com.matching.aws.service.AwsS3Service;
 import com.matching.common.config.JwtTokenProvider;
+import com.matching.exception.dto.ErrorCode;
+import com.matching.exception.util.CustomException;
 import com.matching.member.domain.*;
 import com.matching.member.dto.MemberResponse;
 import com.matching.member.dto.MemberUpdateRequest;
@@ -23,10 +25,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -54,7 +53,7 @@ public class MemberServiceImpl implements MemberService {
         boolean existsByEmail = memberRepository.existsByEmail(parameter.getEmail());
 
         if(existsByEmail) {
-            throw new RuntimeException("회원 이메일이 존재합니다.");
+            throw new CustomException(ErrorCode.USER_EXIST_EMAIL);
         }
 
         if(!multipartFile.isEmpty()) {
@@ -81,14 +80,14 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberResponse signIn(SignInRequest parameter) {
         Member member = memberRepository.findByEmail(parameter.getEmail())
-                .orElseThrow(() -> new RuntimeException("해당 회원이 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         if(!passwordEncoder.matches(parameter.getPassword(), member.getPassword())) {
-            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+            throw new CustomException(ErrorCode.PASSWORD_NOT_MATCH);
         }
 
-        String accessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getRoles());
-        String refreshToken = jwtTokenProvider.createRefreshToken(member.getId(), member.getRoles());
+        String accessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getRoles(member.getRole()));
+        String refreshToken = jwtTokenProvider.createRefreshToken(member.getId(), member.getRoles(member.getRole()));
 
         refreshTokenRepository.save(
                 RefreshToken.builder()
@@ -110,10 +109,10 @@ public class MemberServiceImpl implements MemberService {
 
             if(jwtTokenProvider.validateToken(accessToken) == 2) {
                 Member member = memberRepository.findById(id)
-                        .orElseThrow(() -> new RuntimeException("회원이 없습니다."));
+                        .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-                String newAccessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getRoles());
-                String newRefreshToken = jwtTokenProvider.createRefreshToken(member.getId(), member.getRoles());
+                String newAccessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getRoles(member.getRole()));
+                String newRefreshToken = jwtTokenProvider.createRefreshToken(member.getId(), member.getRoles(member.getRole()));
 
                 refreshTokenRepository.save(
                         RefreshToken.builder()
@@ -140,11 +139,11 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberResponse updateMember(MemberUpdateRequest parameter, Long id, List<MultipartFile> multipartFile) {
         Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("해당 회원이 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         member.getMemberSkills().clear();
 
-        String accessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getRoles());
+        String accessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getRoles(member.getRole()));
 
         if(multipartFile != null) {
             List<String> uploadFile = awsS3Service.upload(multipartFile);
@@ -176,7 +175,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public boolean logout(HttpServletRequest request, Long memberId) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new RuntimeException("해당 회원이 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         String token = jwtTokenProvider.resolveToken(request);
 
         updateUserByTokenBlackList(token, member.getId());
@@ -194,7 +193,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public boolean withdraw(HttpServletRequest request, Long memberId) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new RuntimeException("해당 회원이 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         String token = jwtTokenProvider.resolveToken(request);
 
         updateUserByTokenBlackList(token, member.getId());

@@ -16,12 +16,15 @@ public interface ProjectPostService {
     Long updatePost(Long postId, Long userId, ProjectPostUpdateRequest parameter);
     void deletePost(Long postId, Long userId);
     Page<ProjectPostResponse> getPostByCategoryDesc(Long categoryId);
-//    Page<ProjectPostResponse> getPostSearchList(PostSearchRequest parameter);
+    Page<ProjectPostResponse> getPostSearchList(PostSearchRequest parameter);
 
     // 참가 중인 projectPost 조회
     Page<ProjectPostResponse> getPostByParticipant(Long memberId);
     // 작성한 글 조회
     Page<ProjectPostResponse> getPostByWrite(Long memberId);
+
+    void toggleLike(Long memberId, Long projectPostId);
+
     Long participate(PlanRequest parameter, String email, Long postId);
     void completePlan(String email, Long planId);
 }

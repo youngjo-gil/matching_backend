@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 public class PlanResponse {
     private Long id;
-    private String detail;
+    private String body;
     private boolean completed;
     private LocalDate startedAt;
     private LocalDate endedAt;
@@ -25,7 +25,7 @@ public class PlanResponse {
     public static PlanResponse of(Plan plan, ProjectPost projectPost) {
         return PlanResponse.builder()
                 .id(plan.getId())
-                .detail(plan.getDetail())
+                .body(plan.getPlanBody())
                 .completed(plan.isCompleted())
                 .startedAt(plan.getStartedAt())
                 .endedAt(plan.getEndedAt())

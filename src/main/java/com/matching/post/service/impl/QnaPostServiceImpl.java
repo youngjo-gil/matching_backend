@@ -2,21 +2,28 @@ package com.matching.post.service.impl;
 
 import com.matching.comment.domain.QnaComment;
 import com.matching.comment.repository.QnaCommentRepository;
+import com.matching.exception.dto.ErrorCode;
+import com.matching.exception.util.CustomException;
 import com.matching.member.domain.Member;
 import com.matching.member.repository.MemberRepository;
 import com.matching.post.domain.QnaPost;
 import com.matching.post.domain.QnaPostLike;
+import com.matching.post.dto.ProjectPostResponse;
 import com.matching.post.dto.QnaPostRequest;
 import com.matching.post.dto.QnaPostResponse;
 import com.matching.post.repository.QnaPostLikeRepository;
 import com.matching.post.repository.QnaPostRepository;
 import com.matching.post.service.QnaHashtagService;
 import com.matching.post.service.QnaPostService;
+import com.matching.scrap.domain.QnaPostScrap;
+import com.matching.scrap.repostory.QnaPostScrapRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -29,26 +36,28 @@ public class QnaPostServiceImpl implements QnaPostService {
     private final QnaHashtagService qnaHashtagService;
     private final QnaPostLikeRepository qnaPostLikeRepository;
     private final QnaCommentRepository qnaCommentRepository;
+    private final QnaPostScrapRepository qnaPostScrapRepository;
+
+    private final static int PAGE_SIZE = 10;
 
     @Transactional
     @Override
     public Long writeQna(QnaPostRequest parameter, Long memberId) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 회원이 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        parameter.setMember(member);
-
-        QnaPost qnaPost = qnaPostRepository.save(QnaPost.from(parameter));
+        QnaPost qnaPost = qnaPostRepository.save(QnaPost.from(parameter, member));
 
         qnaHashtagService.saveQnaHashtag(qnaPost, parameter.getHashtagList());
 
         return qnaPost.getId();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public QnaPostResponse getQna(Long qnaPostId) {
         QnaPost qnaPost = qnaPostRepository.findById(qnaPostId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 포스트가 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
         Long likeCount = getLikeCount(qnaPost.getId());
         List<QnaComment> qnaCommentList = new ArrayList<>();
 
@@ -65,36 +74,43 @@ public class QnaPostServiceImpl implements QnaPostService {
     @Override
     public Long updateQna(QnaPostRequest parameter, Long memberId, Long qnaPostId) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 회원이 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         QnaPost qnaPost = qnaPostRepository.findByIdAndAuthor_Id(qnaPostId, member.getId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 포스트가 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
         qnaPost.getHashtags().clear();
+
+        qnaPost.setTitle(parameter.getTitle());
+        qnaPost.setBody(parameter.getBody());
 
         qnaHashtagService.saveQnaHashtag(qnaPost, parameter.getHashtagList());
 
         return qnaPost.getId();
     }
 
+    @Transactional
     @Override
-    public void deleteQna(Long memberId, Long qnaPostId) {
+    public Long deleteQna(Long memberId, Long qnaPostId) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 회원이 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         QnaPost qnaPost = qnaPostRepository.findByIdAndAuthor_Id(qnaPostId, member.getId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 포스트가 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
         qnaPostRepository.delete(qnaPost);
+
+        return qnaPostId;
     }
 
+    @Transactional
     @Override
     public void toggleLike(Long memberId, Long qnaPostId) {
         Optional<QnaPostLike> qnaPostLikeOptional = qnaPostLikeRepository.findByMember_IdAndQnaPost_Id(memberId, qnaPostId);
 
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 회원이 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         QnaPost qnaPost = qnaPostRepository.findById(qnaPostId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
         if(qnaPostLikeOptional.isPresent()){
             // 좋아요가 있는경우 취소처리
@@ -103,6 +119,40 @@ public class QnaPostServiceImpl implements QnaPostService {
             QnaPostLike qnaPostLike = QnaPostLike.from(member, qnaPost);
             qnaPostLikeRepository.save(qnaPostLike);
         }
+    }
+
+    @Transactional
+    @Override
+    public void toggleScrap(Long memberId, Long qnaPostId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        QnaPost qnaPost = qnaPostRepository.findById(qnaPostId)
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
+
+        Optional<QnaPostScrap> qnaPostScrapOptional = qnaPostScrapRepository.findByQnaPost_IdAndMember_Id(qnaPost.getId(), member.getId());
+
+        if(qnaPostScrapOptional.isPresent()) {
+            qnaPostScrapRepository.delete(qnaPostScrapOptional.get());
+        } else {
+            QnaPostScrap qnaPostScrap = QnaPostScrap.from(member, qnaPost);
+            qnaPostScrapRepository.save(qnaPostScrap);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<QnaPostResponse> getPostByScrap(Long memberId, int pageNum) {
+        Pageable pageable = PageRequest.of(pageNum, PAGE_SIZE);
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        Page<QnaPost> qnaPostPage = qnaPostRepository.findAllQnaPostByScrapMemberId(member.getId(), pageable);
+
+        return qnaPostPage.map(post -> {
+            Long likeCount = getLikeCount(post.getId());
+            return QnaPostResponse.from(post, likeCount);
+        });
     }
 
     public Long getLikeCount(Long qnaPostId) {

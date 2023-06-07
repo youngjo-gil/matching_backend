@@ -90,4 +90,7 @@ public class ProjectPostController {
         Long memberId = Long.parseLong(user.getUsername());
         return ResponseUtil.SUCCESS("목록 조회 성공", projectPostService.getPostByWrite(memberId));
     }
+
+    // 스크랩한 qna 게시글 조회
+
 }

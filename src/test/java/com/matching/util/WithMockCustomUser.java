@@ -1,5 +1,6 @@
 package com.matching.util;
 
+import com.matching.member.domain.MemberRole;
 import org.springframework.security.test.context.support.WithSecurityContext;
 
 import java.lang.annotation.Retention;
@@ -11,8 +12,7 @@ public @interface WithMockCustomUser {
     long id() default 8L;
     String nickname() default "test_nickname";
     String[] roles() default {"USER"};
-    String role() default "USER";
-    String[] authorities() default {};
+    MemberRole role() default MemberRole.USER;
     String password() default "password";
 
     String username() default "8";

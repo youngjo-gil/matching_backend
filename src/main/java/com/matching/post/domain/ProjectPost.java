@@ -28,7 +28,8 @@ public class ProjectPost extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
-    private String content;
+    private String body;
+    private String summary;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
@@ -54,13 +55,15 @@ public class ProjectPost extends BaseEntity {
 
     public void update(ProjectPostUpdateRequest request) {
         this.title = request.getTitle();
-        this.content = request.getContent();
+        this.body = request.getBody();
+        this.summary = request.getSummary();
     }
 
     public static ProjectPost from(ProjectPostRequest parameter, Category category) {
         return ProjectPost.builder()
                 .title(parameter.getTitle())
-                .content(parameter.getContent())
+                .body(parameter.getBody())
+                .summary(parameter.getSummary())
                 .category(category)
                 .author(parameter.getMember())
                 .build();

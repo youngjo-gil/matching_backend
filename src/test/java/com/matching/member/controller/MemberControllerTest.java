@@ -1,6 +1,5 @@
 package com.matching.member.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.matching.common.config.JwtTokenProvider;
 import com.matching.member.dto.MemberResponse;
@@ -22,8 +21,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.RestDocumentationExtension;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -31,8 +28,6 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import java.nio.charset.StandardCharsets;
-import java.nio.file.attribute.UserPrincipal;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +35,8 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.any;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -79,7 +75,6 @@ class MemberControllerTest {
                 .email("test_test@test.com")
                 .password("1234")
                 .name("test_name")
-                .nickname("nickname")
                 .build();
 
         String content = objectMapper.writeValueAsString(request);
@@ -142,7 +137,6 @@ class MemberControllerTest {
         // given
         MemberUpdateRequest request = MemberUpdateRequest.builder()
                 .password("3333")
-                .nickname("test_name")
                 .build();
 
         String content = objectMapper.writeValueAsString(request);

@@ -86,8 +86,4 @@ public class MemberController {
     ) {
         return ResponseUtil.SUCCESS("회원 탈퇴 완료", memberService.withdraw(request, Long.parseLong(user.getUsername())));
     }
-
-    // 작성한 글 조회
-
-
 }
