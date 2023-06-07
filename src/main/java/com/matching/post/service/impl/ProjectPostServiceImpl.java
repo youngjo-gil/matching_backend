@@ -15,10 +15,12 @@ import com.matching.plan.repository.PlanRepository;
 import com.matching.post.domain.Category;
 import com.matching.post.domain.ProjectPost;
 import com.matching.post.domain.ProjectPostLike;
+import com.matching.post.dto.PostSearchRequest;
 import com.matching.post.dto.ProjectPostRequest;
 import com.matching.post.dto.ProjectPostResponse;
 import com.matching.post.dto.ProjectPostUpdateRequest;
 import com.matching.post.repository.CategoryRepository;
+import com.matching.post.repository.PostRepositoryQuerydsl;
 import com.matching.post.repository.ProjectPostLikeRepository;
 import com.matching.post.repository.ProjectPostRepository;
 import com.matching.post.service.ProjectPostService;
@@ -46,7 +48,7 @@ public class ProjectPostServiceImpl implements ProjectPostService {
     private final CategoryRepository categoryRepository;
     private final PhotoRepository photoRepository;
     private final ProjectPostLikeRepository projectPostLikeRepository;
-//    private final PostRepositoryQuerydsl postRepositoryQuerydsl;
+    private final PostRepositoryQuerydsl postRepositoryQuerydsl;
 
     private final PhotoService photoService;
 
@@ -87,23 +89,23 @@ public class ProjectPostServiceImpl implements ProjectPostService {
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
         List<Photo> photoList = photoRepository.findAllByProjectPost_Id(projectPost.getId())
-                .orElse(null);
-        List<String> test = photoList.stream().map(item -> item.getPathname())
+                .orElse(new ArrayList<>());
+        List<String> photoPathList = photoList.stream().map(Photo::getPathname)
                 .collect(Collectors.toList());
 
-        return ProjectPostResponse.from(projectPost, test);
+        return ProjectPostResponse.from(projectPost, photoPathList);
     }
 
-//    @Override
-//    @Transactional(readOnly = true)
-//    public Page<ProjectPostResponse> getPostSearchList(PostSearchRequest parameter) {
-//        return ProjectPostResponse.fromEntitiesPage(
-//                postRepositoryQuerydsl.findAll(
-//                        PageRequest.of(parameter.getPageNum(), parameter.getPageSize()),
-//                        parameter.getKeyword()
-//                )
-//        );
-//    }
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ProjectPostResponse> getPostSearchList(PostSearchRequest parameter) {
+        return ProjectPostResponse.fromEntitiesPage(
+                postRepositoryQuerydsl.findAll(
+                        PageRequest.of(parameter.getPageNum(), parameter.getPageSize()),
+                        parameter.getKeyword()
+                )
+        );
+    }
 
     // 참가중인 ProjectPost 조회ㅔ
     @Override
