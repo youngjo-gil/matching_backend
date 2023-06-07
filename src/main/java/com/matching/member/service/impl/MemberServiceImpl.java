@@ -5,6 +5,8 @@ import com.matching.aws.service.AwsS3Service;
 import com.matching.common.config.JwtTokenProvider;
 import com.matching.exception.dto.ErrorCode;
 import com.matching.exception.util.CustomException;
+import com.matching.follow.domain.Follow;
+import com.matching.follow.repository.FollowRepository;
 import com.matching.member.domain.*;
 import com.matching.member.dto.MemberResponse;
 import com.matching.member.dto.MemberUpdateRequest;
@@ -18,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +39,8 @@ public class MemberServiceImpl implements MemberService {
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
     private final AwsS3Service awsS3Service;
+
+    private final FollowRepository followRepository;
 
     @Value("${jwt.refresh-token-expire-time}")
     int expiredTime;
@@ -200,6 +205,29 @@ public class MemberServiceImpl implements MemberService {
         member.setStatus(MemberStatus.WITHDRAW);
 
         return true;
+    }
+
+    @Transactional
+    @Override
+    public void follow(Long followerId, Long followingId) {
+        Member followerMember = memberRepository.findById(followerId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        Member followingMember = memberRepository.findByIdAndStatus(followingId, MemberStatus.REGISTERED)
+                .orElseThrow(() -> new CustomException(ErrorCode.FOLLOWING_USER_NOT_FOUND));
+
+        if(followerMember.getId().equals(followingMember.getId())) {
+            throw new CustomException(ErrorCode.CANNOT_FOLLOWING_SELF);
+        }
+
+        followRepository.findByFollowingMemberAndFollowerMember(followingMember, followerMember)
+                .ifPresentOrElse(
+                        followRepository::delete,
+                        () -> followRepository.save(Follow.builder()
+                                .followerMember(followerMember)
+                                .followingMember(followingMember)
+                                .build())
+                );
+
     }
 
     private void updateUserByTokenBlackList(String accessToken, Long memberId) {

@@ -17,4 +17,6 @@ public interface MemberService {
     MemberResponse reissue(HttpServletRequest request, Long id);
     boolean logout(HttpServletRequest request, Long memberId);
     boolean withdraw(HttpServletRequest request, Long memberId);
+
+    void follow(Long followerId, Long followingId);
 }

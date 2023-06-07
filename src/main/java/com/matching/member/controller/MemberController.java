@@ -2,6 +2,7 @@ package com.matching.member.controller;
 
 import com.matching.common.dto.ResponseDto;
 import com.matching.common.utils.ResponseUtil;
+import com.matching.member.domain.Member;
 import com.matching.member.dto.MemberResponse;
 import com.matching.member.dto.MemberUpdateRequest;
 import com.matching.member.dto.SignInRequest;
@@ -85,5 +86,14 @@ public class MemberController {
             @AuthenticationPrincipal User user
     ) {
         return ResponseUtil.SUCCESS("회원 탈퇴 완료", memberService.withdraw(request, Long.parseLong(user.getUsername())));
+    }
+
+    @PostMapping("/follow/{userId}")
+    public ResponseDto follow(
+            @AuthenticationPrincipal User user,
+            @PathVariable Long userId
+    ) {
+        memberService.follow(userId, Long.parseLong(user.getUsername()));
+        return ResponseUtil.SUCCESS("팔로우 성공", userId);
     }
 }
