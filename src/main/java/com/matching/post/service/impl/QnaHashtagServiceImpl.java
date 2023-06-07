@@ -14,9 +14,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class QnaHashtagServiceImpl implements QnaHashtagService {
     private final QnaHashtagRepository qnaHashtagRepository;
-    private List<QnaHashtag> hashtags = new ArrayList<>();
     @Override
     public void saveQnaHashtag(QnaPost qnaPost, List<String> qnaHashtagList) {
+        List<QnaHashtag> hashtags = new ArrayList<>();
+
         for (String hashtag: qnaHashtagList) {
             QnaHashtag qnaHashtag = QnaHashtag.from(hashtag, qnaPost);
 
