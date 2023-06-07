@@ -180,18 +180,16 @@ public class ProjectPostServiceImpl implements ProjectPostService {
 
     @Override
     public void toggleLike(Long memberId, Long projectPostId) {
-        Optional<ProjectPostLike> projectPostLikeOptional = projectPostLikeRepository.findByMember_IdAndProjectPost_Id(memberId, projectPostId);
-
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         ProjectPost projectPost = projectPostRepository.findById(projectPostId).orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
-        if(projectPostLikeOptional.isPresent()) {
-            projectPostLikeRepository.delete(projectPostLikeOptional.get());
-        } else {
-            ProjectPostLike projectPostLike = ProjectPostLike.from(member, projectPost);
-            projectPostLikeRepository.save(projectPostLike);
-        }
+        projectPostLikeRepository.findByMember_IdAndProjectPost_Id(memberId, projectPostId)
+                .ifPresentOrElse(
+                        projectPostLikeRepository::delete,
+                        () -> projectPostLikeRepository.save(ProjectPostLike.from(member, projectPost))
+                );
+
     }
 
     @Transactional
