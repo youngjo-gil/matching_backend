@@ -105,20 +105,16 @@ public class QnaPostServiceImpl implements QnaPostService {
     @Transactional
     @Override
     public void toggleLike(Long memberId, Long qnaPostId) {
-        Optional<QnaPostLike> qnaPostLikeOptional = qnaPostLikeRepository.findByMember_IdAndQnaPost_Id(memberId, qnaPostId);
-
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         QnaPost qnaPost = qnaPostRepository.findById(qnaPostId)
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
-        if(qnaPostLikeOptional.isPresent()){
-            // 좋아요가 있는경우 취소처리
-            qnaPostLikeRepository.delete(qnaPostLikeOptional.get());
-        } else {
-            QnaPostLike qnaPostLike = QnaPostLike.from(member, qnaPost);
-            qnaPostLikeRepository.save(qnaPostLike);
-        }
+        qnaPostLikeRepository.findByMember_IdAndQnaPost_Id(memberId, qnaPostId)
+                .ifPresentOrElse(
+                        qnaPostLikeRepository::delete,
+                        () -> qnaPostLikeRepository.save(QnaPostLike.from(member, qnaPost))
+                );
     }
 
     @Transactional
@@ -129,14 +125,11 @@ public class QnaPostServiceImpl implements QnaPostService {
         QnaPost qnaPost = qnaPostRepository.findById(qnaPostId)
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
-        Optional<QnaPostScrap> qnaPostScrapOptional = qnaPostScrapRepository.findByQnaPost_IdAndMember_Id(qnaPost.getId(), member.getId());
-
-        if(qnaPostScrapOptional.isPresent()) {
-            qnaPostScrapRepository.delete(qnaPostScrapOptional.get());
-        } else {
-            QnaPostScrap qnaPostScrap = QnaPostScrap.from(member, qnaPost);
-            qnaPostScrapRepository.save(qnaPostScrap);
-        }
+        qnaPostScrapRepository.findByQnaPost_IdAndMember_Id(qnaPostId, memberId)
+                .ifPresentOrElse(
+                        qnaPostScrapRepository::delete,
+                        () -> qnaPostScrapRepository.save(QnaPostScrap.from(member, qnaPost))
+                );
     }
 
     @Override

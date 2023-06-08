@@ -36,7 +36,6 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/ws/**", "/swagger-ui.html")
                 .permitAll()
-
 //                .anyRequest().authenticated()
                 .and()
                 .apply(new JwtSecurityConfig(jwtTokenProvider));
