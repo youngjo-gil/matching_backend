@@ -1,5 +1,6 @@
 package com.matching.post.service.impl;
 
+import com.matching.MatchingApplication;
 import com.matching.comment.domain.QnaComment;
 import com.matching.comment.repository.QnaCommentRepository;
 import com.matching.exception.dto.ErrorCode;
@@ -18,6 +19,8 @@ import com.matching.post.service.QnaPostService;
 import com.matching.scrap.domain.QnaPostScrap;
 import com.matching.scrap.repostory.QnaPostScrapRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -37,6 +40,7 @@ public class QnaPostServiceImpl implements QnaPostService {
     private final QnaPostLikeRepository qnaPostLikeRepository;
     private final QnaCommentRepository qnaCommentRepository;
     private final QnaPostScrapRepository qnaPostScrapRepository;
+    private final Logger logger = LoggerFactory.getLogger(MatchingApplication.class);
 
     private final static int PAGE_SIZE = 10;
 
@@ -49,6 +53,8 @@ public class QnaPostServiceImpl implements QnaPostService {
         QnaPost qnaPost = qnaPostRepository.save(QnaPost.from(parameter, member));
 
         qnaHashtagService.saveQnaHashtag(qnaPost, parameter.getHashtagList());
+
+        logger.info("QnaPost written by user: " + member.getId());
 
         return qnaPost.getId();
     }
@@ -85,6 +91,8 @@ public class QnaPostServiceImpl implements QnaPostService {
 
         qnaHashtagService.saveQnaHashtag(qnaPost, parameter.getHashtagList());
 
+        logger.info("QnaPost updated by user: " + memberId);
+
         return qnaPost.getId();
     }
 
@@ -97,6 +105,8 @@ public class QnaPostServiceImpl implements QnaPostService {
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
         qnaPostRepository.delete(qnaPost);
+
+        logger.info("QnaPost deleted by user: " + memberId);
 
         return qnaPostId;
     }
