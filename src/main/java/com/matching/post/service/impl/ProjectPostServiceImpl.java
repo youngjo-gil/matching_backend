@@ -83,7 +83,7 @@ public class ProjectPostServiceImpl implements ProjectPostService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public ProjectPostResponse getPost(Long id) {
         ProjectPost projectPost = projectPostRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
@@ -107,7 +107,7 @@ public class ProjectPostServiceImpl implements ProjectPostService {
         );
     }
 
-    // 참가중인 ProjectPost 조회ㅔ
+    @Transactional(readOnly = true)
     @Override
     public Page<ProjectPostResponse> getPostByParticipant(Long memberId) {
         Member member = memberRepository.findById(memberId)
@@ -119,8 +119,7 @@ public class ProjectPostServiceImpl implements ProjectPostService {
                 )
         );
     }
-
-    // 작성한 글 조회
+    @Transactional(readOnly = true)
     @Override
     public Page<ProjectPostResponse> getPostByWrite(Long memberId) {
         Member member = memberRepository.findById(memberId)
@@ -145,6 +144,7 @@ public class ProjectPostServiceImpl implements ProjectPostService {
         return projectPost.getId();
     }
 
+    @Transactional
     @Override
     public void deletePost(Long postId, Long userId) {
         ProjectPost projectPost = projectPostRepository.findById(postId)
@@ -162,6 +162,7 @@ public class ProjectPostServiceImpl implements ProjectPostService {
         }
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Page<ProjectPostResponse> getPostByCategoryDesc(Long categoryId) {
         int pageNumber = 0; // 가져올 페이지 번호 (0부터 시작)
@@ -178,6 +179,7 @@ public class ProjectPostServiceImpl implements ProjectPostService {
         });
     }
 
+    @Transactional
     @Override
     public void toggleLike(Long memberId, Long projectPostId) {
         Member member = memberRepository.findById(memberId)
@@ -200,10 +202,8 @@ public class ProjectPostServiceImpl implements ProjectPostService {
         ProjectPost projectPost = projectPostRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
-
-//        return planRepository.save(Plan.from(parameter, participant, projectPost)).getId();
-
         return null;
+//        return planRepository.save(Plan.from(parameter, participant, projectPost)).getId();
     }
 
     @Transactional
