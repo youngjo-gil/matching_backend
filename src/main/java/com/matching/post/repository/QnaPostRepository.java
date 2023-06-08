@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface QnaPostRepository extends JpaRepository<QnaPost, Long> {
     Optional<QnaPost> findByIdAndAuthor_Id(Long qnaPostId, Long memberId);
 
-    @Query("select count(pl) from QnaPostLike pl where pl.qnaPost.id = :qnaPostId")
+    @Query(value = "select count(pl.id) from qna_post_like pl where pl.qna_post_id = :qnaPostId", nativeQuery = true)
     Long getLikeCountByQnaPostId(@Param("qnaPostId") Long qnaPostId);
 
     @Query(value = "select * from qna_post q join qna_post_scrap qps where qps.member_id = :memberId order by q.created_at desc", nativeQuery = true)

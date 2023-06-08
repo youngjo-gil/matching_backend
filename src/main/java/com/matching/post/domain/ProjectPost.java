@@ -47,10 +47,6 @@ public class ProjectPost extends BaseEntity {
 
     @OneToMany(mappedBy = "projectPost", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<Participate> participateList = new ArrayList<>();
-
-    @OneToMany(mappedBy = "projectPost", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonIgnore
     private List<Photo> photoList = new ArrayList<>();
 
     public void update(ProjectPostUpdateRequest request) {

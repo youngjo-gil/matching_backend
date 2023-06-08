@@ -28,7 +28,7 @@ public interface ProjectPostRepository extends JpaRepository<ProjectPost, Long> 
     Page<ProjectPost> findAllOrderByParticipantByPhotoCountByCategoryDesc(@Param("categoryId") Long categoryId, Pageable pageable);
 
     // 해당 회원 참가중인 projectPost 조회
-    @Query(value = "SELECT p FROM ProjectPost p LEFT JOIN p.participateList p2 WHERE p2.participate.id = :memberId AND (p2.status = 'LEADER' OR p2.status = 'ADMISSION') ORDER BY p.createdAt DESC")
+    @Query(value = "SELECT * FROM project_post p LEFT JOIN participate p2 WHERE p2.id = :memberId AND (p2.status = 'LEADER' OR p2.status = 'ADMISSION') ORDER BY p.createdAt DESC", nativeQuery = true)
     Page<ProjectPost> findAllOrderByParticipateByPhotoCreatedAtDesc(@Param("memberId") Long memberId, Pageable pageable);
 
     // 작성한 글 조회
