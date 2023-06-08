@@ -31,3 +31,5 @@
 ### ERD
 ![matching_erd](https://github.com/0jo-gil/matching_backend/assets/74961404/da48fc99-14ad-4f67-938d-f0ba2bc5943e)
 
+### SKILL
+- Java11, SpringBoot, Gradle, MariaDB, Redis, JUnit, Mockito, JPA, JWT, Spring Security, AWS Bucket, WebSocket, Stomp, QueryDSL
