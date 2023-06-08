@@ -1,5 +1,6 @@
 package com.matching.post.service.impl;
 
+import com.matching.MatchingApplication;
 import com.matching.exception.dto.ErrorCode;
 import com.matching.exception.util.CustomException;
 import com.matching.member.domain.Member;
@@ -25,6 +26,9 @@ import com.matching.post.repository.ProjectPostLikeRepository;
 import com.matching.post.repository.ProjectPostRepository;
 import com.matching.post.service.ProjectPostService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -38,6 +42,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ProjectPostServiceImpl implements ProjectPostService {
@@ -52,7 +57,7 @@ public class ProjectPostServiceImpl implements ProjectPostService {
 
     private final PhotoService photoService;
 
-
+    private final Logger logger = LoggerFactory.getLogger(MatchingApplication.class);
 
 
     @Transactional
@@ -75,10 +80,10 @@ public class ProjectPostServiceImpl implements ProjectPostService {
                 photoService.savePhoto(projectPost, multipartFile);
             }
         }
-
         projectPost.setPlan(plan);
         participate.setStatus(Participate.ParticipateStatus.LEADER);
 
+        logger.info("ProjectPost written by user: " + member.getId());
         return projectPost.getId();
     }
 
@@ -137,6 +142,8 @@ public class ProjectPostServiceImpl implements ProjectPostService {
 
         projectPost.update(parameter);
 
+        logger.info("ProjectPost updated by user: " + userId);
+
         return projectPost.getId();
     }
 
@@ -155,6 +162,7 @@ public class ProjectPostServiceImpl implements ProjectPostService {
             throw new CustomException(ErrorCode.PARTICIPATE_NOT_LEADER);
         } else {
             projectPostRepository.deleteById(projectPost.getId());
+            logger.info("ProjectPost deleted by user: " + userId);
         }
     }
 

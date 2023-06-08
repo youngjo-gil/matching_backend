@@ -54,7 +54,8 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     @Override
     public boolean signup(SignUpRequest parameter, List<MultipartFile> multipartFile) {
-        logger.info("sign up: {}" );
+        logger.info("sign up: " + parameter.getEmail());
+
         boolean existsByEmail = memberRepository.existsByEmail(parameter.getEmail());
 
         if(existsByEmail) {
@@ -70,11 +71,7 @@ public class MemberServiceImpl implements MemberService {
 
         Member member = memberRepository.save(Member.from(parameter));
 
-        if(ObjectUtils.isEmpty(member)) {
-            return false;
-        } else {
-            return true;
-        }
+        return !ObjectUtils.isEmpty(member);
     }
 
     /**
@@ -185,6 +182,7 @@ public class MemberServiceImpl implements MemberService {
 
         updateUserByTokenBlackList(token, member.getId());
 
+        logger.info("logout: " + member.getId());
         return true;
     }
 
@@ -203,6 +201,8 @@ public class MemberServiceImpl implements MemberService {
 
         updateUserByTokenBlackList(token, member.getId());
         member.setStatus(MemberStatus.WITHDRAW);
+
+        logger.info("withdraw: " + member.getId());
 
         return true;
     }
