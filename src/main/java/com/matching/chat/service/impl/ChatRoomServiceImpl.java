@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -30,6 +31,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         return chatRoom;
     }
 
+    @Transactional
     @Override
     public Long createRoom(Long postId, Long userId) {
         ProjectPost projectPost = projectPostRepository.findByIdAndAuthor_Id(postId, userId)

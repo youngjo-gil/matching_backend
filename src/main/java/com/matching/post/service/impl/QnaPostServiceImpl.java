@@ -53,7 +53,6 @@ public class QnaPostServiceImpl implements QnaPostService {
         return qnaPost.getId();
     }
 
-    @Transactional(readOnly = true)
     @Override
     public QnaPostResponse getQna(Long qnaPostId) {
         QnaPost qnaPost = qnaPostRepository.findById(qnaPostId)
@@ -133,7 +132,6 @@ public class QnaPostServiceImpl implements QnaPostService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Page<QnaPostResponse> getPostByScrap(Long memberId, int pageNum) {
         Pageable pageable = PageRequest.of(pageNum, PAGE_SIZE);
 

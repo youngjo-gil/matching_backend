@@ -6,6 +6,7 @@ import com.matching.post.repository.QnaHashtagRepository;
 import com.matching.post.service.QnaHashtagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class QnaHashtagServiceImpl implements QnaHashtagService {
     private final QnaHashtagRepository qnaHashtagRepository;
+    @Transactional
     @Override
     public void saveQnaHashtag(QnaPost qnaPost, List<String> qnaHashtagList) {
         List<QnaHashtag> hashtags = new ArrayList<>();
