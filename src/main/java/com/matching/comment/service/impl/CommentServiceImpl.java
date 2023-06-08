@@ -12,6 +12,7 @@ import com.matching.post.domain.QnaPost;
 import com.matching.post.repository.QnaPostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -19,6 +20,7 @@ public class CommentServiceImpl implements CommentService {
     private final QnaPostRepository qnaPostRepository;
     private final MemberRepository memberRepository;
     private final QnaCommentRepository qnaCommentRepository;
+    @Transactional
     @Override
     public QnaComment createQnaComment(CommentRequest parameter, Long postId, Long memberId) {
         QnaPost qnaPost = qnaPostRepository.findById(postId)
@@ -30,6 +32,7 @@ public class CommentServiceImpl implements CommentService {
         return qnaCommentRepository.save(qnaComment);
     }
 
+    @Transactional
     @Override
     public QnaComment updateQnaComment(CommentRequest parameter, Long commentId, Long memberId) {
         QnaComment qnaComment = qnaCommentRepository.findByIdAndAuthor_Id(commentId, memberId)
@@ -39,6 +42,7 @@ public class CommentServiceImpl implements CommentService {
         return qnaComment;
     }
 
+    @Transactional
     @Override
     public void removeQnaComment(Long commentId, Long memberId) {
         QnaComment qnaComment = qnaCommentRepository.findByIdAndAuthor_Id(commentId, memberId)

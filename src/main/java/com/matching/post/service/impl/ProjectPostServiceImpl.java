@@ -83,7 +83,6 @@ public class ProjectPostServiceImpl implements ProjectPostService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public ProjectPostResponse getPost(Long id) {
         ProjectPost projectPost = projectPostRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
@@ -97,7 +96,6 @@ public class ProjectPostServiceImpl implements ProjectPostService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Page<ProjectPostResponse> getPostSearchList(PostSearchRequest parameter) {
         return ProjectPostResponse.fromEntitiesPage(
                 postRepositoryQuerydsl.findAll(
@@ -107,7 +105,6 @@ public class ProjectPostServiceImpl implements ProjectPostService {
         );
     }
 
-    @Transactional(readOnly = true)
     @Override
     public Page<ProjectPostResponse> getPostByParticipant(Long memberId) {
         Member member = memberRepository.findById(memberId)
@@ -119,7 +116,6 @@ public class ProjectPostServiceImpl implements ProjectPostService {
                 )
         );
     }
-    @Transactional(readOnly = true)
     @Override
     public Page<ProjectPostResponse> getPostByWrite(Long memberId) {
         Member member = memberRepository.findById(memberId)
@@ -162,7 +158,6 @@ public class ProjectPostServiceImpl implements ProjectPostService {
         }
     }
 
-    @Transactional(readOnly = true)
     @Override
     public Page<ProjectPostResponse> getPostByCategoryDesc(Long categoryId) {
         int pageNumber = 0; // 가져올 페이지 번호 (0부터 시작)
