@@ -33,12 +33,6 @@ public class QnaPost extends BaseEntity {
 
     @OneToMany(mappedBy = "qnaPost", orphanRemoval = true)
     private List<QnaHashtag> hashtags = new ArrayList<>();
-    @OneToMany(mappedBy = "qnaPost", orphanRemoval = true)
-    private List<QnaPostLike> qnaPostLikes = new ArrayList<>();
-
-    @OneToMany(mappedBy = "qnaPost", orphanRemoval = true)
-    private List<QnaPostScrap> qnaPostScrapList = new ArrayList<>();
-
 
     public void update(QnaPostRequest request) {
         this.title = request.getTitle();
