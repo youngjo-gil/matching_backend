@@ -21,7 +21,7 @@ public class ProjectPostController {
     @PostMapping("/write")
     public ResponseDto savePost(
             @RequestPart(value = "file", required = false) List<MultipartFile> multipartFile,
-            @RequestPart("request") ProjectPostRequest parameter,
+            @RequestPart("request") @Valid ProjectPostRequest parameter,
             @AuthenticationPrincipal User user
     ) {
         String id = user.getUsername();
@@ -41,7 +41,7 @@ public class ProjectPostController {
     @PatchMapping("/{postId}")
     public ResponseDto updatePost(
         @PathVariable Long postId,
-        @RequestBody ProjectPostUpdateRequest parameter,
+        @RequestBody @Valid ProjectPostUpdateRequest parameter,
         @AuthenticationPrincipal User user
     ) {
         Long id = projectPostService.updatePost(postId, Long.parseLong(user.getUsername()), parameter);
@@ -66,12 +66,12 @@ public class ProjectPostController {
     }
 
 
-//    @GetMapping("/search")
-//    public ResponseDto getPostSearchList(
-//            @RequestBody @Valid PostSearchRequest parameter
-//    ) {
-//        return ResponseUtil.SUCCESS("조회성공", projectPostService.getPostSearchList(parameter));
-//    }
+    @GetMapping("/search")
+    public ResponseDto getPostSearchList(
+            @RequestBody @Valid PostSearchRequest parameter
+    ) {
+        return ResponseUtil.SUCCESS("조회성공", projectPostService.getPostSearchList(parameter));
+    }
 
     // 참가 중인 projectPost 조회
     @GetMapping("/myPage/participant")

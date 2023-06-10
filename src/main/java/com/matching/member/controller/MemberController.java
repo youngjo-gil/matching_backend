@@ -60,7 +60,7 @@ public class MemberController {
 
     @PatchMapping("/update")
     public ResponseDto updateMember(
-            @RequestPart(value = "request") MemberUpdateRequest parameter,
+            @RequestPart(value = "request") @Valid MemberUpdateRequest parameter,
             @RequestPart(value = "file", required = false) List<MultipartFile> multipartFile,
             @AuthenticationPrincipal User user
     ) {
